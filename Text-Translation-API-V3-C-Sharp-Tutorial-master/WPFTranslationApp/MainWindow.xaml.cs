@@ -10,6 +10,15 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Timers;
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
+
 namespace MSTranslatorTextDemo
 {
     
@@ -19,11 +28,14 @@ namespace MSTranslatorTextDemo
         // authentication options, see: https://docs.microsoft.com/azure/cognitive-services/authentication.
         const string COGNITIVE_SERVICES_KEY = "ef0b37aefa9748fdae669e201b8ecbaa"; //Eamonn's key to Microsoft Cognitive Services
         const string SPELL_CHECK_KEY = "11b50d922c7b443d962e7631f983feb3"; //Eamonn's key to the microsoft spellcheck service. 
-        
+        const string OBJECT_RECOGNIZER_KEY = "6926aeac904449bab4a529027e187fe8";
+
         // Endpoints for Translator Text and Bing Spell Check
+        const string OBJECT_RECOGNIZER_ENDPOINT = "https://canadacentral.api.cognitive.microsoft.com/";
         public static readonly string TEXT_TRANSLATION_API_ENDPOINT = "https://api.cognitive.microsofttranslator.com/{0}?api-version=3.0";
         const string BING_SPELL_CHECK_API_ENDPOINT = "https://api.cognitive.microsoft.com/bing/v7.0/spellcheck";
         
+
         // An array of language codes
         private string[] languageCodes;
         private static string authToken;
@@ -37,11 +49,26 @@ namespace MSTranslatorTextDemo
 
         String foreignLanguageText; //gets populated by the translateTextIntoLanguage() function. 
 
+        //Super Duper Computer Vision Client Instance
+        private ComputerVisionClient computerVision;
+
+        // Specify the features to return
+        private static readonly List<VisualFeatureTypes> features =
+            new List<VisualFeatureTypes>()
+        {
+            VisualFeatureTypes.Objects
+        };
+
 
         public MainWindow()
         {
             // at least show an error dialog if there's an unexpected error
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(HandleExceptions);
+
+            computerVision = new ComputerVisionClient(
+               new ApiKeyServiceClientCredentials(OBJECT_RECOGNIZER_KEY),
+               new System.Net.Http.DelegatingHandler[] { });
+            computerVision.Endpoint = OBJECT_RECOGNIZER_ENDPOINT;
 
             //Make sure the key is suitable. 
             if (COGNITIVE_SERVICES_KEY.Length != 32)
@@ -132,74 +159,40 @@ namespace MSTranslatorTextDemo
             MessageBox.Show("Caught " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             System.Windows.Application.Current.Shutdown();
         }
+        
+        //*** ANALYZE LOCAL IMAGE ASYNC
+        private async Task AnalyzeLocalAsync(string imagePath)
+        {
+            if (!File.Exists(imagePath))
+            {
+                Console.WriteLine(
+                    "\nUnable to open or read localImagePath:\n{0} \n", imagePath);
+                return;
+            }
+
+            using (Stream imageStream = File.OpenRead(imagePath)) {
+                ImageAnalysis analysis = await computerVision.AnalyzeImageInStreamAsync(
+                    imageStream, features);
+                TranslateObject(analysis);
+            }
+        }
 
 
         // ***** POPULATE LANGUAGE MENUS
         private void PopulateLanguageMenus()
         {
-            // Add option to automatically detect the source language
-            FromLanguageComboBox.Items.Add("Detect");
+            
 
             int count = languageCodesAndTitles.Count;
             foreach (string menuItem in languageCodesAndTitles.Keys)
             {
-                FromLanguageComboBox.Items.Add(menuItem);
+
                 ToLanguageComboBox.Items.Add(menuItem);
             }
 
             // Set default languages
-            FromLanguageComboBox.SelectedItem = "Detect";
             ToLanguageComboBox.SelectedItem = "English";
         }
-
-
-
-
-
-
-
-        // ***** DETECT LANGUAGE OF TEXT TO BE TRANSLATED
-        private string DetectLanguage(string text)
-        {
-            string detectUri = string.Format(TEXT_TRANSLATION_API_ENDPOINT ,"detect");
-
-            // Create request to Detect languages with Translator Text
-            HttpWebRequest detectLanguageWebRequest = (HttpWebRequest)WebRequest.Create(detectUri);
-            detectLanguageWebRequest.Headers.Add("Authorization","Bearer " + authToken);
-            detectLanguageWebRequest.Headers.Add("Ocp-Apim-Subscription-Region", "global");
-            detectLanguageWebRequest.ContentType = "application/json; charset=utf-8";
-            detectLanguageWebRequest.Method = "POST";
-
-            // Send request
-            var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
-            string jsonText = serializer.Serialize(text);
-
-            string body = "[{ \"Text\": " + jsonText + " }]";
-            byte[] data = Encoding.UTF8.GetBytes(body);
-
-            detectLanguageWebRequest.ContentLength = data.Length;
-
-            using (var requestStream = detectLanguageWebRequest.GetRequestStream())
-                requestStream.Write(data, 0, data.Length);
-
-            HttpWebResponse response = (HttpWebResponse)detectLanguageWebRequest.GetResponse();
-
-            // Read and parse JSON response
-            var responseStream = response.GetResponseStream();
-            var jsonString = new StreamReader(responseStream, Encoding.GetEncoding("utf-8")).ReadToEnd();
-            dynamic jsonResponse = serializer.DeserializeObject(jsonString);
-
-            // Fish out the detected language code
-            var languageInfo = jsonResponse[0];
-            if (languageInfo["score"] > (decimal)0.5)
-            {
-                DetectedLanguageLabel.Content = languageInfo["language"];
-                return languageInfo["language"];
-            }
-            else
-                return "Unable to confidently detect input language.";
-        }
-
 
 
         // ***** CORRECT SPELLING OF TEXT TO BE TRANSLATED
@@ -279,32 +272,26 @@ namespace MSTranslatorTextDemo
                     languageCodesAndTitles.Add(kv.Value["name"], kv.Key);
                 }
             }
-        }
+        }    
 
-        // ***** PERFORM TRANSLATION ON BUTTON CLICK
-        private async void TranslateButton_Click(object sender, EventArgs e)
+
+        // ***** PERFORM TRANSLATION OF RECOGNIZED OBJECT
+        private async void TranslateObject(ImageAnalysis analysis)
         {
-            string textToTranslate = TextToTranslate.Text.Trim();
 
-            string fromLanguage = FromLanguageComboBox.SelectedValue.ToString();
-            string fromLanguageCode;
+            IList<DetectedObject> objects = analysis.Objects;
+            string textToTranslate = "";
 
-            // Auto-detect source language if requested
-            if (fromLanguage == "Detect")
+            foreach (DetectedObject obj in objects)
             {
-                fromLanguageCode = DetectLanguage(textToTranslate);
-                if (!languageCodes.Contains(fromLanguageCode))
-                {
-                    MessageBox.Show("The source language could not be detected automatically " +
-                        "or is not supported for translation.", "Language detection failed",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
+                textToTranslate += obj.ObjectProperty +" - " + obj.Confidence + " | ";
             }
-            else
-                fromLanguageCode = languageCodesAndTitles[fromLanguage];
 
             string toLanguageCode = languageCodesAndTitles[ToLanguageComboBox.SelectedValue.ToString()];
+
+            string fromLanguageCode = "en";
+
+            DetectedObjectLabel.Content = textToTranslate;
 
             // Spell-check the source text if the source language is English
             if (fromLanguageCode == "en")
@@ -314,7 +301,6 @@ namespace MSTranslatorTextDemo
                 else
                 {
                     textToTranslate = CorrectSpelling(textToTranslate);
-                    TextToTranslate.Text = textToTranslate;     // put corrected text into input field
                 }
             }
 
@@ -348,93 +334,25 @@ namespace MSTranslatorTextDemo
 
                 var result = JsonConvert.DeserializeObject<List<Dictionary<string, List<Dictionary<string, string>>>>>(responseBody);
                 var translation = result[0]["translations"][0]["text"];
-                
+
 
                 // Update the translation field
                 TranslatedTextLabel.Content = translation;
             }
         }
 
-        
 
-
-
-        /// <summary>
-        /// Will detect the langauge of the homeLangaugeText, then translate it to the foreign language. 
-        /// </summary>
-        /// <param name="homeLanguageText">The text to translate from</param>
-        /// <param name="toLanguage">The langauge to translate to</param>
-        private async void translateTextIntoLangauge(String homeLanguageText, String toLanguage)
+        private void DetectionButtonClick(object sender, RoutedEventArgs e)
         {
-            
+            string localPath = ImageFileLocation.Text;
+            //creates an async chain of tasks, with the first one being AnalyzeLocalAsync.
+            var info = AnalyzeLocalAsync(localPath);
+            Console.WriteLine("Images being analyzed ...");
+            TranslatedTextLabel.Content = "Images being analyzed ...";
 
-            string fromLanguage = FromLanguageComboBox.SelectedValue.ToString();
-            string fromLanguageCode;
+            Task.WhenAll(info).Wait(5000);
 
-            // Auto-detect source language if requested
-            if (fromLanguage == "Detect")
-            {
-                fromLanguageCode = DetectLanguage(homeLanguageText);
-                if (!languageCodes.Contains(fromLanguageCode))
-                {
-                    MessageBox.Show("The source language could not be detected automatically " +
-                        "or is not supported for translation.", "Language detection failed",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-            }
-            else {
-                fromLanguageCode = languageCodesAndTitles[fromLanguage];
-            }
-                
-            string toLanguageCode = languageCodesAndTitles[toLanguage]; //searches the dictionary for the matching langauge code. 
 
-            // Spell-check the source text if the source language is English
-            if (fromLanguageCode == "en")
-            {
-                if (homeLanguageText.StartsWith("-"))    // don't spell check in this case
-                    homeLanguageText = homeLanguageText.Substring(1);
-                else
-                {
-                    homeLanguageText = CorrectSpelling(homeLanguageText);
-                }
-            }
-
-            // Handle null operations: no text or same source/target languages
-            if (homeLanguageText == "" || fromLanguageCode == toLanguageCode)
-            {
-                return;
-            }
-
-            // Send translation request
-            string endpoint = string.Format(TEXT_TRANSLATION_API_ENDPOINT, "translate");
-            string uri = string.Format(endpoint + "&from={0}&to={1}", fromLanguageCode, toLanguageCode);
-
-            System.Object[] body = new System.Object[] { new { Text = homeLanguageText } };
-            var requestBody = JsonConvert.SerializeObject(body);
-
-            using (var client = new HttpClient())
-            using (var request = new HttpRequestMessage())
-            {
-                request.Method = HttpMethod.Post;
-                request.RequestUri = new Uri(uri);
-                request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-                request.Headers.Add("Authorization", "Bearer " + authToken);
-                request.Headers.Add("Ocp-Apim-Subscription-Region", "global");
-                request.Headers.Add("X-ClientTraceId", Guid.NewGuid().ToString());
-
-                var response = await client.SendAsync(request);
-                var responseBody = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine("Response: " + responseBody.ToString());
-
-                var result = JsonConvert.DeserializeObject<List<Dictionary<string, List<Dictionary<string, string>>>>>(responseBody);
-                var translation = result[0]["translations"][0]["text"];
-
-                // Update the foreignLanguageText field
-                foreignLanguageText = translation;
-            }
         }
-
-
     }
 }
