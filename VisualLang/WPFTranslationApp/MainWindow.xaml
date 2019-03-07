@@ -4,23 +4,39 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MSTranslatorTextDemo"
+        xmlns:cam="clr-namespace:WebcamControl;assembly=WebcamControl"
         mc:Ignorable="d"
-        Title="Microsoft Translator" Height="400" Width="700" BorderThickness="0">
+        Title="VisualLang" Height="700" Width="700" BorderThickness="0">
     <Grid>
-        <Label x:Name="label" Content="Microsoft Translator" HorizontalAlignment="Left" Margin="39,6,0,0" VerticalAlignment="Top" Height="49" FontSize="26.667"/>
-        <TextBox x:Name="ImageFileLocation" HorizontalAlignment="Left" Height="23" Margin="42,160,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="600" FontSize="14" TabIndex="3"/>
-        <Label x:Name="EnterTextLabel" Content="Path to image file:" HorizontalAlignment="Left" Margin="40,129,0,0" VerticalAlignment="Top" FontSize="14"/>
-        <Label x:Name="toLabel" Content="Translate to:" HorizontalAlignment="Left" Margin="304,58,0,0" VerticalAlignment="Top" FontSize="14"/>
+        
+        <Label x:Name="label" Content="VisualLang" HorizontalAlignment="Left" Margin="39,6,0,0" VerticalAlignment="Top" Height="49" FontSize="26.667"/>
+        
 
-        <Button x:Name="DetectionButton" Content="Detect And Translate" HorizontalAlignment="Left" Margin="39,206,0,0" VerticalAlignment="Top" Width="186" Height="31" Click="DetectionButtonClick" FontSize="14" TabIndex="4" IsDefault="True"/>
+        <Label x:Name="EnterTextLabel" Content="Path to image file:" HorizontalAlignment="Left" Margin="42,390,0,0" VerticalAlignment="Top" FontSize="14"/>
+        <TextBox x:Name="ImageFileLocation" HorizontalAlignment="Left" Height="23" Margin="42,424,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="600" FontSize="14" TabIndex="3"/>
+        <Label x:Name="toLabel" Content="Translate to:" HorizontalAlignment="Left" Margin="574,20,0,0" VerticalAlignment="Top" FontSize="14" RenderTransformOrigin="0.648,-0.913"/>
+
+        <Button x:Name="DetectionButton" Content="Detect And Translate" HorizontalAlignment="Left" Margin="42,452,0,0" VerticalAlignment="Top" Width="186" Height="31" Click="DetectionButtonClick" FontSize="14" TabIndex="4" IsDefault="True"/>
         <ComboBox x:Name="ToLanguageComboBox"
                 HorizontalAlignment="Left"
-                Margin="306,88,0,0"
+                Margin="484,48,0,0"
                 VerticalAlignment="Top"
-                Width="175" FontSize="14" TabIndex="2">
+                Width="175" FontSize="14" TabIndex="2" RenderTransformOrigin="0.497,0.551">
 
         </ComboBox>
-        <Label x:Name="TranslatedTextLabel" Content="Translation is displayed here." HorizontalAlignment="Left" Margin="39,255,0,0" VerticalAlignment="Top" Width="620" FontSize="14" Height="85" BorderThickness="0"/>
-        <Label x:Name="DetectedObjectLabel" Content="Detected object is displayed here." HorizontalAlignment="Left" Margin="39,285,0,0" VerticalAlignment="Top" Width="620" FontSize="14" Height="84" BorderThickness="0"/>
+        <Label x:Name="TranslatedTextLabel" Content="Translation is displayed here." HorizontalAlignment="Left" Margin="42,488,0,0" VerticalAlignment="Top" Width="620" FontSize="14" Height="85" BorderThickness="0"/>
+        <Label x:Name="DetectedObjectLabel" Content="Detected object is displayed here." HorizontalAlignment="Left" Margin="38,578,0,0" VerticalAlignment="Top" Width="620" FontSize="14" Height="84" BorderThickness="0"/>
+        <Button x:Name="snapshotBtn" Content="snapshot" HorizontalAlignment="Left" Margin="583,78,0,0" VerticalAlignment="Top" Width="75" Click="SnapshotBtn_Click"/>
+
+        <cam:Webcam x:Name="WebcamViewer" Margin="42,144,53,328.5"
+
+                    FrameRate="30"
+                    Width="600"
+                    Height="200"
+                    ImageDirectory="X:\BCIT Work\CST Y2\Term 1\COMP 3951 Tech Pro\Project\GitHubRepo\VisualLang\TestImages"
+                    VideoDevice="{Binding SelectedItem, ElementName=VidDevices}"
+            
+                    AudioDevice="{Binding SelectedItem, ElementName=AudDevices}"/>
+
     </Grid>
 </Window>

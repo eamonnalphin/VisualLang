@@ -18,10 +18,12 @@ using System.Threading.Tasks;
 
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
+using System.Collections.ObjectModel;
+using Microsoft.Expression.Encoder.Devices;
 
 namespace MSTranslatorTextDemo
 {
-    
+
     public partial class MainWindow : Window
     {
         // This sample uses the Cognitive Services subscription key for all services. To learn more about
@@ -34,7 +36,7 @@ namespace MSTranslatorTextDemo
         const string OBJECT_RECOGNIZER_ENDPOINT = "https://canadacentral.api.cognitive.microsoft.com/";
         public static readonly string TEXT_TRANSLATION_API_ENDPOINT = "https://api.cognitive.microsofttranslator.com/{0}?api-version=3.0";
         const string BING_SPELL_CHECK_API_ENDPOINT = "https://api.cognitive.microsoft.com/bing/v7.0/spellcheck";
-        
+
 
         // An array of language codes
         private string[] languageCodes;
@@ -95,6 +97,14 @@ namespace MSTranslatorTextDemo
                 // Populate drop-downs with values from GetLanguagesForTranslate
                 PopulateLanguageMenus();
             }
+
+            //image capture setup
+            this.DataContext = this;
+            startPreview();
+
+
+
+
         }
 
         /// <summary>
@@ -159,7 +169,7 @@ namespace MSTranslatorTextDemo
             MessageBox.Show("Caught " + e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             System.Windows.Application.Current.Shutdown();
         }
-        
+
         //*** ANALYZE LOCAL IMAGE ASYNC
         private async Task AnalyzeLocalAsync(string imagePath)
         {
@@ -170,7 +180,8 @@ namespace MSTranslatorTextDemo
                 return;
             }
 
-            using (Stream imageStream = File.OpenRead(imagePath)) {
+            using (Stream imageStream = File.OpenRead(imagePath))
+            {
                 ImageAnalysis analysis = await computerVision.AnalyzeImageInStreamAsync(
                     imageStream, features);
                 TranslateObject(analysis);
@@ -181,7 +192,7 @@ namespace MSTranslatorTextDemo
         // ***** POPULATE LANGUAGE MENUS
         private void PopulateLanguageMenus()
         {
-            
+
 
             int count = languageCodesAndTitles.Count;
             foreach (string menuItem in languageCodesAndTitles.Keys)
@@ -272,7 +283,7 @@ namespace MSTranslatorTextDemo
                     languageCodesAndTitles.Add(kv.Value["name"], kv.Key);
                 }
             }
-        }    
+        }
 
 
         // ***** PERFORM TRANSLATION OF RECOGNIZED OBJECT
@@ -284,7 +295,7 @@ namespace MSTranslatorTextDemo
 
             foreach (DetectedObject obj in objects)
             {
-                textToTranslate += obj.ObjectProperty +" - " + obj.Confidence + " | ";
+                textToTranslate += obj.ObjectProperty + " - " + obj.Confidence + " | ";
             }
 
             string toLanguageCode = languageCodesAndTitles[ToLanguageComboBox.SelectedValue.ToString()];
@@ -354,5 +365,57 @@ namespace MSTranslatorTextDemo
 
 
         }
+
+
+
+
+        /********************************************************************************************
+         * IMAGE CAPTURE CODE
+         **/
+
+        public Collection<EncoderDevice> VideoDevices { get; set; }
+        public Collection<EncoderDevice> AudioDevices { get; set; }
+
+        private void startPreview()
+        {
+
+     
+            try
+            {
+                VideoDevices = EncoderDevices.FindDevices(EncoderDeviceType.Video);
+                AudioDevices = EncoderDevices.FindDevices(EncoderDeviceType.Audio);
+                // Display webcam video
+                WebcamViewer.VideoDevice = VideoDevices[1];
+                WebcamViewer.StartPreview();
+            }
+            catch (Microsoft.Expression.Encoder.SystemErrorException ex)
+            {
+                MessageBox.Show("Device is in use by another application");
+            }
+        }
+
+        private void startpreview2()
+        {
+            
+        }
+
+
+        private void capturePhoto()
+        {
+            WebcamViewer.ImageDirectory = "X:\\BCIT Work\\CST Y2\\Term 1\\COMP 3951 Tech Pro\\Project\\GitHubRepo\\VisualLang\\TestImages";
+            
+            WebcamViewer.TakeSnapshot();
+            
+        }
+
+        private void SnapshotBtn_Click(object sender, RoutedEventArgs e)
+        {
+            capturePhoto();
+        }
     }
 }
+         
+
+
+
+    
