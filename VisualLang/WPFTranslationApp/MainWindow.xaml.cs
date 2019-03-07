@@ -223,7 +223,10 @@ namespace MSTranslatorTextDemo
             spellCheckWebRequest.ContentLength = data.Length;
             using (var requestStream = spellCheckWebRequest.GetRequestStream())
                 requestStream.Write(data, 0, data.Length);
+
             HttpWebResponse response = (HttpWebResponse)spellCheckWebRequest.GetResponse();
+           
+            
 
             // Read and parse the JSON response; get spelling corrections
             var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
@@ -311,7 +314,7 @@ namespace MSTranslatorTextDemo
                     textToTranslate = textToTranslate.Substring(1);
                 else
                 {
-                    textToTranslate = CorrectSpelling(textToTranslate);
+                    //textToTranslate = CorrectSpelling(textToTranslate);
                 }
             }
 
@@ -366,7 +369,16 @@ namespace MSTranslatorTextDemo
 
         }
 
+        private void runDetection()
+        {
+            string localPath = ImageFileLocation.Text;
+            //creates an async chain of tasks, with the first one being AnalyzeLocalAsync.
+            var info = AnalyzeLocalAsync(localPath);
+            Console.WriteLine("Images being analyzed ...");
+            TranslatedTextLabel.Content = "Images being analyzed ...";
 
+            Task.WhenAll(info).Wait(5000);
+        }
 
 
         /********************************************************************************************
@@ -379,13 +391,12 @@ namespace MSTranslatorTextDemo
         private void startPreview()
         {
 
-     
             try
             {
                 VideoDevices = EncoderDevices.FindDevices(EncoderDeviceType.Video);
                 AudioDevices = EncoderDevices.FindDevices(EncoderDeviceType.Audio);
                 // Display webcam video
-                WebcamViewer.VideoDevice = VideoDevices[1];
+                WebcamViewer.VideoDevice = VideoDevices[1]; //contains a list of the video devices. Try changing the number if your's isn't working. This should be changed to pull from a list. 
                 WebcamViewer.StartPreview();
             }
             catch (Microsoft.Expression.Encoder.SystemErrorException ex)
@@ -394,17 +405,21 @@ namespace MSTranslatorTextDemo
             }
         }
 
-        private void startpreview2()
-        {
-            
-        }
-
 
         private void capturePhoto()
         {
             WebcamViewer.ImageDirectory = "X:\\BCIT Work\\CST Y2\\Term 1\\COMP 3951 Tech Pro\\Project\\GitHubRepo\\VisualLang\\TestImages";
             
-            WebcamViewer.TakeSnapshot();
+            String imageFile = WebcamViewer.TakeSnapshot();
+            ImageFileLocation.Text = imageFile;
+            try
+            {
+                runDetection();
+            } catch (Exception e)
+            {
+                Console.WriteLine("Something went wrong, but I caught it.");
+            }
+            
             
         }
 

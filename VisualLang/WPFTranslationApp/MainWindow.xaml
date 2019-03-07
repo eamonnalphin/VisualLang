@@ -35,7 +35,7 @@
                     Height="200"
                     ImageDirectory="X:\BCIT Work\CST Y2\Term 1\COMP 3951 Tech Pro\Project\GitHubRepo\VisualLang\TestImages"
                     VideoDevice="{Binding SelectedItem, ElementName=VidDevices}"
-            
+                   
                     AudioDevice="{Binding SelectedItem, ElementName=AudDevices}"/>
 
     </Grid>
