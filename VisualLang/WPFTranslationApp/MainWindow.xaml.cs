@@ -358,24 +358,19 @@ namespace MSTranslatorTextDemo
 
         private void DetectionButtonClick(object sender, RoutedEventArgs e)
         {
-            string localPath = ImageFileLocation.Text;
-            //creates an async chain of tasks, with the first one being AnalyzeLocalAsync.
-            var info = AnalyzeLocalAsync(localPath);
-            Console.WriteLine("Images being analyzed ...");
-            TranslatedTextLabel.Content = "Images being analyzed ...";
-
-            Task.WhenAll(info).Wait(5000);
+            runDetection();
 
 
         }
 
         private void runDetection()
         {
+            TranslatedTextLabel.Content = "Images being analyzed ...";
             string localPath = ImageFileLocation.Text;
             //creates an async chain of tasks, with the first one being AnalyzeLocalAsync.
             var info = AnalyzeLocalAsync(localPath);
             Console.WriteLine("Images being analyzed ...");
-            TranslatedTextLabel.Content = "Images being analyzed ...";
+           
 
             Task.WhenAll(info).Wait(5000);
         }
