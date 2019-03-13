@@ -23,6 +23,7 @@ using Microsoft.Expression.Encoder.Devices;
 using System.Drawing;
 using System.Windows.Media;
 using System.Threading;
+using System.Collections;
 
 namespace MSTranslatorTextDemo
 {
@@ -53,6 +54,8 @@ namespace MSTranslatorTextDemo
         private static int tokenTimeout = 8 * 60 * 1000; //8 minutes
 
         String foreignLanguageText; //gets populated by the translateTextIntoLanguage() function. 
+        String unknownObjectString = "Unknown Object";
+        ArrayList knownObjects;
 
         //Super Duper Computer Vision Client Instance
         private ComputerVisionClient computerVision;
@@ -67,6 +70,9 @@ namespace MSTranslatorTextDemo
 
         public MainWindow()
         {
+            //prepare the array
+            knownObjects = new ArrayList();
+
             // at least show an error dialog if there's an unexpected error
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(HandleExceptions);
 
@@ -195,12 +201,15 @@ namespace MSTranslatorTextDemo
             {
                 ImageAnalysis analysis = await computerVision.AnalyzeImageInStreamAsync(
                     imageStream, features);
-                TranslateObject(analysis);
+                String textToTranslate = GetObjectNameAndSetLabels(analysis);
+                TranslateTextToForeignLanguage(textToTranslate);
             }
         }
 
 
-        // ***** POPULATE LANGUAGE MENUS
+        /// <summary>
+        /// Populate the language menus
+        /// </summary>
         private void PopulateLanguageMenus()
         {
 
@@ -217,7 +226,11 @@ namespace MSTranslatorTextDemo
         }
 
 
-        // ***** CORRECT SPELLING OF TEXT TO BE TRANSLATED
+        /// <summary>
+        /// Spellcheck the word, if it's in english. 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         private string CorrectSpelling(string text)
         {
             string uri = BING_SPELL_CHECK_API_ENDPOINT + "?mode=spell&mkt=en-US";
@@ -300,29 +313,53 @@ namespace MSTranslatorTextDemo
         }
 
 
-        // ***** PERFORM TRANSLATION OF RECOGNIZED OBJECT
-        private async void TranslateObject(ImageAnalysis analysis)
+        /// <summary>
+        /// Gets the object name from the analysis, sets the relevant labels, and returns teh object name.
+        /// </summary>
+        /// <param name="analysis"></param>
+        /// <returns>The name of the object in English.</returns>
+        private string GetObjectNameAndSetLabels(ImageAnalysis analysis)
         {
-
             IList<DetectedObject> objects = analysis.Objects;
             string textToTranslate = "";
+            string detectedObjectString = "";
 
             foreach (DetectedObject obj in objects)
             {
-                textToTranslate += obj.ObjectProperty + " with " + (obj.Confidence*100) + "% Confidence ";
+                textToTranslate += obj.ObjectProperty; //only translate object name
+                detectedObjectString += "\"" + obj.ObjectProperty + "\" (" + (obj.Confidence * 100) + "% Confidence)";
             }
 
-            if(textToTranslate == "")
+            if (textToTranslate == "")
             {
-                textToTranslate = "Unknown Object";
+                textToTranslate = unknownObjectString;
+                detectedObjectString = unknownObjectString;
+
+            } else
+            {
+                //object was recognized, save it to the list.
+                knownObjects.Add(textToTranslate);
             }
+
+            DetectedObjectLabel.Content = detectedObjectString;
+
+            return textToTranslate;
+
+
+
+        }
+
+        /// <summary>
+        /// Get the name of, and translate, the object in the analysis. 
+        /// </summary>
+        /// <param name="analysis"></param>
+        private async void TranslateTextToForeignLanguage(String textToTranslate)
+        {
 
 
             string toLanguageCode = languageCodesAndTitles[ToLanguageComboBox.SelectedValue.ToString()];
 
             string fromLanguageCode = "en";
-
-            DetectedObjectLabel.Content = textToTranslate;
 
             // Spell-check the source text if the source language is English
             if (fromLanguageCode == "en")
