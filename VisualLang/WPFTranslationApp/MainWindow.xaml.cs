@@ -20,6 +20,9 @@ using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using System.Collections.ObjectModel;
 using Microsoft.Expression.Encoder.Devices;
+using System.Drawing;
+using System.Windows.Media;
+using System.Threading;
 
 namespace MSTranslatorTextDemo
 {
@@ -46,7 +49,7 @@ namespace MSTranslatorTextDemo
         private SortedDictionary<string, string> languageCodesAndTitles =
             new SortedDictionary<string, string>(Comparer<string>.Create((a, b) => string.Compare(a, b, true)));
 
-        private static Timer tokenRefresh; //The timer to refresh the token 
+        private static System.Timers.Timer tokenRefresh; //The timer to refresh the token 
         private static int tokenTimeout = 8 * 60 * 1000; //8 minutes
 
         String foreignLanguageText; //gets populated by the translateTextIntoLanguage() function. 
@@ -101,10 +104,18 @@ namespace MSTranslatorTextDemo
             //image capture setup
             this.DataContext = this;
             startPreview();
+            styleGUI();
 
 
 
 
+        }
+
+
+        private void styleGUI()
+        {
+            TranslatedTextLabel.Content = "Translated Text will Appear Here.";
+            DetectedObjectLabel.Content = "Detected Object Name will Appear Here";
         }
 
         /// <summary>
@@ -112,7 +123,7 @@ namespace MSTranslatorTextDemo
         /// </summary>
         private static void startTimer()
         {
-            tokenRefresh = new Timer(tokenTimeout);
+            tokenRefresh = new System.Timers.Timer(tokenTimeout);
             tokenRefresh.AutoReset = true;
             tokenRefresh.Enabled = true;
             tokenRefresh.Elapsed += new ElapsedEventHandler(onTokenRefresh);
@@ -298,8 +309,14 @@ namespace MSTranslatorTextDemo
 
             foreach (DetectedObject obj in objects)
             {
-                textToTranslate += obj.ObjectProperty + " - " + obj.Confidence + " | ";
+                textToTranslate += obj.ObjectProperty + " with " + (obj.Confidence*100) + "% Confidence ";
             }
+
+            if(textToTranslate == "")
+            {
+                textToTranslate = "Unknown Object";
+            }
+
 
             string toLanguageCode = languageCodesAndTitles[ToLanguageComboBox.SelectedValue.ToString()];
 
@@ -319,11 +336,19 @@ namespace MSTranslatorTextDemo
             }
 
             // Handle null operations: no text or same source/target languages
-            if (textToTranslate == "" || fromLanguageCode == toLanguageCode)
+            if (textToTranslate == "")
+            {
+                DetectedObjectLabel.Content = "Error";
+
+                return;
+
+            } else if(fromLanguageCode == toLanguageCode)
             {
                 TranslatedTextLabel.Content = textToTranslate;
-                return;
             }
+
+
+
 
             // Send translation request
             string endpoint = string.Format(TEXT_TRANSLATION_API_ENDPOINT, "translate");
@@ -359,19 +384,15 @@ namespace MSTranslatorTextDemo
         private void DetectionButtonClick(object sender, RoutedEventArgs e)
         {
             runDetection();
-
-
         }
 
         private void runDetection()
         {
-            TranslatedTextLabel.Content = "Images being analyzed ...";
+           
             string localPath = ImageFileLocation.Text;
             //creates an async chain of tasks, with the first one being AnalyzeLocalAsync.
             var info = AnalyzeLocalAsync(localPath);
-            Console.WriteLine("Images being analyzed ...");
-           
-
+            
             Task.WhenAll(info).Wait(5000);
         }
 
@@ -403,15 +424,18 @@ namespace MSTranslatorTextDemo
 
         private void capturePhoto()
         {
+
             WebcamViewer.ImageDirectory = "X:\\BCIT Work\\CST Y2\\Term 1\\COMP 3951 Tech Pro\\Project\\GitHubRepo\\VisualLang\\TestImages";
             
             String imageFile = WebcamViewer.TakeSnapshot();
             ImageFileLocation.Text = imageFile;
             try
             {
+                DetectedObjectLabel.Content = "Detecting object...";
                 runDetection();
             } catch (Exception e)
             {
+                DetectedObjectLabel.Content = "Error capturing photo.";
                 Console.WriteLine("Something went wrong, but I caught it.");
             }
             
@@ -420,8 +444,12 @@ namespace MSTranslatorTextDemo
 
         private void SnapshotBtn_Click(object sender, RoutedEventArgs e)
         {
+
+            TranslatedTextLabel.Content = "Detecting and Translating...";
             capturePhoto();
+            
         }
+        
     }
 }
          

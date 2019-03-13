@@ -12,31 +12,63 @@
         <Label x:Name="label" Content="VisualLang" HorizontalAlignment="Left" Margin="39,6,0,0" VerticalAlignment="Top" Height="49" FontSize="26.667"/>
 
 
-        <Label x:Name="EnterTextLabel" Content="Specific Path to image file:" HorizontalAlignment="Left" Margin="42,384,0,0" VerticalAlignment="Top" FontSize="14"/>
-        <TextBox x:Name="ImageFileLocation" HorizontalAlignment="Left" Height="44" Margin="42,418,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="600" TabIndex="3"/>
+        <Label x:Name="EnterTextLabel" Content="Specific Path to image file:" HorizontalAlignment="Left" Margin="42,384,0,0" VerticalAlignment="Top" FontSize="14" Visibility="Hidden"/>
+        <TextBox x:Name="ImageFileLocation" HorizontalAlignment="Left" Height="44" Margin="42,418,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="600" TabIndex="3" Visibility="Hidden"/>
         <Label x:Name="toLabel" Content="Translate to:" HorizontalAlignment="Left" Margin="574,20,0,0" VerticalAlignment="Top" FontSize="14" RenderTransformOrigin="0.648,-0.913"/>
 
-        <Button x:Name="DetectionButton" Content="Detect And Translate" HorizontalAlignment="Left" Margin="42,474,0,0" VerticalAlignment="Top" Width="186" Height="31" Click="DetectionButtonClick" FontSize="14" TabIndex="4" IsDefault="True"/>
+        <Button x:Name="DetectionButton" Content="Detect And Translate" HorizontalAlignment="Left" Margin="42,474,0,0" VerticalAlignment="Top" Width="186" Height="31" Click="DetectionButtonClick" FontSize="14" TabIndex="4" IsDefault="True" Visibility="Hidden"/>
         <ComboBox x:Name="ToLanguageComboBox"
                 HorizontalAlignment="Left"
                 Margin="484,48,0,0"
                 VerticalAlignment="Top"
                 Width="175" FontSize="14" TabIndex="2" RenderTransformOrigin="0.497,0.551">
-
         </ComboBox>
-        <Label x:Name="TranslatedTextLabel" Content="Translation is displayed here." HorizontalAlignment="Left" Margin="42,505,0,0" VerticalAlignment="Top" Width="620" FontSize="14" Height="68" BorderThickness="0"/>
-        <Label x:Name="DetectedObjectLabel" Content="Detected object is displayed here." HorizontalAlignment="Left" Margin="42,578,0,0" VerticalAlignment="Top" Width="620" FontSize="14" Height="84" BorderThickness="0"/>
-        <Button x:Name="snapshotBtn" Content="snapshot" HorizontalAlignment="Left" Margin="583,78,0,0" VerticalAlignment="Top" Width="75" Click="SnapshotBtn_Click"/>
-
-
-
-
         
+        <Label 
+            x:Name="TranslatedTextLabel" 
+            Content="" 
+            HorizontalAlignment="Left" 
+            Margin="42,505,0,0" 
+            VerticalAlignment="Top" 
+            Width="620" 
+            FontSize="14" 
+            Height="68" 
+            BorderThickness="1"
+            BorderBrush="Black"
+            />
+        
+        <Label 
+            x:Name="DetectedObjectLabel" 
+            Content="" 
+            HorizontalAlignment="Left" 
+            Margin="42,578,0,0" 
+            VerticalAlignment="Top" 
+            Width="620" 
+            FontSize="14" 
+            Height="84" 
+            BorderThickness="1"
+            BorderBrush="Black"/>
+        
+        
+        <Button 
+            x:Name="snapshotBtn" 
+            Content="Detect and Translate" 
+            HorizontalAlignment="Center" 
+            Margin="0,370,0,0"
+            VerticalAlignment="Top" 
+            Width="294" 
+            Height="42"
+            Click="SnapshotBtn_Click" 
             
-            
-        <cam:Webcam 
-           
+           />
 
+
+
+
+
+
+
+        <cam:Webcam 
             x:Name="WebcamViewer" 
             FrameRate="30"        
             Margin="0,0,0,200"
@@ -45,24 +77,12 @@
             Height="200"
             
             HorizontalAlignment="Center"
-            FrameSize="1024, 768"
-            
-            
-           
-            
-        
-            
-            
-            
-                    
+            FrameSize="1024, 768" 
             Background="Aqua"
-                
-                  
-                    
-                    ImageDirectory="X:\BCIT Work\CST Y2\Term 1\COMP 3951 Tech Pro\Project\GitHubRepo\VisualLang\TestImages"
-                    VideoDevice="{Binding SelectedItem, ElementName=VidDevices}"
-                   
-                    AudioDevice="{Binding SelectedItem, ElementName=AudDevices}" />
+    
+            ImageDirectory="X:\BCIT Work\CST Y2\Term 1\COMP 3951 Tech Pro\Project\GitHubRepo\VisualLang\TestImages"    
+            VideoDevice="{Binding SelectedItem, ElementName=VidDevices}" 
+            AudioDevice="{Binding SelectedItem, ElementName=AudDevices}" />
 
     </Grid>
 </Window>
