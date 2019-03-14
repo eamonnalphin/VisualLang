@@ -55,7 +55,15 @@ namespace MSTranslatorTextDemo
 
         String foreignLanguageText; //gets populated by the translateTextIntoLanguage() function. 
         String unknownObjectString = "Unknown Object";
-        ArrayList knownObjects;
+
+        //variables associated with the minigame. 
+        ArrayList knownObjects; //an arraylist to keep known objects in. 
+        int miniGameKnownObjectLimit = 10; //must have this many items recognized in order to play. 
+        float timeLimit = 30; //the number of seconds the user has to find the object. 
+        private static System.Timers.Timer miniGameTimer; //the timer that counts down in the minigame. 
+        bool playingMiniGame = false;
+
+
 
         //Super Duper Computer Vision Client Instance
         private ComputerVisionClient computerVision;
@@ -418,6 +426,76 @@ namespace MSTranslatorTextDemo
         }
 
 
+        /// <summary>
+        /// Translates the string to the foreign language, for the minigame. 
+        /// </summary>
+        /// <param name="textToTranslate"></param>
+        private async void TranslateTextToForeignLanguageForMiniGame(String textToTranslate)
+        {
+
+
+            string toLanguageCode = languageCodesAndTitles[ToLanguageComboBox.SelectedValue.ToString()];
+
+            string fromLanguageCode = "en";
+
+            // Spell-check the source text if the source language is English
+            if (fromLanguageCode == "en")
+            {
+                if (textToTranslate.StartsWith("-"))    // don't spell check in this case
+                    textToTranslate = textToTranslate.Substring(1);
+                else
+                {
+                    //textToTranslate = CorrectSpelling(textToTranslate);
+                }
+            }
+
+            // Handle null operations: no text or same source/target languages
+            if (textToTranslate == "")
+            {
+                ObjectToFindLabel.Content = "Error";
+
+                return;
+
+            }
+            else if (fromLanguageCode == toLanguageCode)
+            {
+                ObjectToFindLabel.Content = textToTranslate;
+            }
+
+
+
+
+            // Send translation request
+            string endpoint = string.Format(TEXT_TRANSLATION_API_ENDPOINT, "translate");
+            string uri = string.Format(endpoint + "&from={0}&to={1}", fromLanguageCode, toLanguageCode);
+
+            System.Object[] body = new System.Object[] { new { Text = textToTranslate } };
+            var requestBody = JsonConvert.SerializeObject(body);
+
+            using (var client = new HttpClient())
+            using (var request = new HttpRequestMessage())
+            {
+                request.Method = HttpMethod.Post;
+                request.RequestUri = new Uri(uri);
+                request.Content = new StringContent(requestBody, Encoding.UTF8, "application/json");
+                request.Headers.Add("Authorization", "Bearer " + authToken);
+                request.Headers.Add("Ocp-Apim-Subscription-Region", "global");
+                request.Headers.Add("X-ClientTraceId", Guid.NewGuid().ToString());
+
+                var response = await client.SendAsync(request);
+                var responseBody = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine("Response: " + responseBody.ToString());
+
+                var result = JsonConvert.DeserializeObject<List<Dictionary<string, List<Dictionary<string, string>>>>>(responseBody);
+                var translation = result[0]["translations"][0]["text"];
+
+
+                // Update the translation field
+                ObjectToFindLabel.Content = translation;
+            }
+        }
+
+
         private void DetectionButtonClick(object sender, RoutedEventArgs e)
         {
             runDetection();
@@ -479,6 +557,7 @@ namespace MSTranslatorTextDemo
             
         }
 
+        
         private void SnapshotBtn_Click(object sender, RoutedEventArgs e)
         {
 
@@ -486,8 +565,67 @@ namespace MSTranslatorTextDemo
             capturePhoto();
             
         }
-        
+
+
+        /// <summary>
+        /// The play minigame button was clicked. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PlayMGBtn_Click(object sender, RoutedEventArgs e)
+        {
+            startMiniGame();
+        }
+
+
+
+        /// <summary>
+        /// Checks if the minigame has enough data to launch, and launches or displays an alert. 
+        /// </summary>
+        private void startMiniGame()
+        {
+            //Check if there are enough known items to play the game
+            if (knownObjects.Count < miniGameKnownObjectLimit)
+            {
+                int diff = miniGameKnownObjectLimit - knownObjects.Count;
+                //display alert.
+                MessageBoxResult warning = MessageBox.Show("Please scan " + diff.ToString() + " more objects, then we can play!", "Almost!");
+
+            }
+            else
+            {
+
+                launchMiniGame();
+
+            }
+        }
+
+        /// <summary>
+        /// Starts the minigame. 
+        /// </summary>
+        private void launchMiniGame()
+        {
+
+            ArrayList remainingObjects = knownObjects;
+
+            //1. Choose a random word from the list of known objects
+            Random randomNumGen = new Random();
+            int randomWordIndex = randomNumGen.Next(0, remainingObjects.Count);
+            String objectToFind = (String) remainingObjects[randomWordIndex];
+
+            //2. Get the translation of the word. 
+            TranslateTextToForeignLanguageForMiniGame(objectToFind);
+
+            //3.Start the timer. 
+
+
+
+
+        }
+
+
     }
+
 }
          
 

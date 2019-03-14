@@ -23,7 +23,7 @@
                 VerticalAlignment="Top"
                 Width="175" FontSize="14" TabIndex="2" RenderTransformOrigin="0.497,0.551">
         </ComboBox>
-        
+
         <Label 
             x:Name="TranslatedTextLabel" 
             Content="" 
@@ -36,7 +36,7 @@
             BorderThickness="1"
             BorderBrush="Black"
             />
-        
+
         <Label 
             x:Name="DetectedObjectLabel" 
             Content="" 
@@ -48,8 +48,8 @@
             Height="84" 
             BorderThickness="1"
             BorderBrush="Black"/>
-        
-        
+
+
         <Button 
             x:Name="snapshotBtn" 
             Content="Detect and Translate" 
@@ -83,6 +83,21 @@
             ImageDirectory="X:\BCIT Work\CST Y2\Term 1\COMP 3951 Tech Pro\Project\GitHubRepo\VisualLang\TestImages"    
             VideoDevice="{Binding SelectedItem, ElementName=VidDevices}" 
             AudioDevice="{Binding SelectedItem, ElementName=AudDevices}" />
+        <Button 
+            x:Name="PlayMGBtn"
+            Content="PlayMiniGame"
+            HorizontalAlignment="Left" 
+            Margin="54,83,0,0" 
+            VerticalAlignment="Top" Width="75" Click="PlayMGBtn_Click"/>
+        
+        <Label 
+            x:Name="ObjectToFindLabel"
+            Content="" 
+            HorizontalAlignment="Left" 
+            Margin="200,436,0,0" 
+            VerticalAlignment="Top" 
+            RenderTransformOrigin="1.769,0.741" 
+            Width="294"/>
 
     </Grid>
 </Window>
