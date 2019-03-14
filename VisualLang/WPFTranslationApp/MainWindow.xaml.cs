@@ -200,6 +200,8 @@ namespace MSTranslatorTextDemo
         //*** ANALYZE LOCAL IMAGE ASYNC
         private async Task AnalyzeLocalAsync(string imagePath)
         {
+            
+
             if (!File.Exists(imagePath))
             {
                 Console.WriteLine(
@@ -214,9 +216,11 @@ namespace MSTranslatorTextDemo
                 String textToTranslate = GetObjectNameAndSetLabels(analysis);
                 
                 TranslateTextToForeignLanguage(textToTranslate);
-                
-                
+ 
             }
+
+           
+
         }
 
 
@@ -336,6 +340,7 @@ namespace MSTranslatorTextDemo
             IList<DetectedObject> objects = analysis.Objects;
             string textToTranslate = "";
             string detectedObjectString = "";
+           
 
             foreach (DetectedObject obj in objects)
             {
@@ -371,8 +376,14 @@ namespace MSTranslatorTextDemo
             if (userSuggestion.Equals(currentWordToFind))
             {
                 
-                MessageBoxResult timeUP = MessageBox.Show("CORRECT! ", "AWESOME!");
+                MessageBoxResult match = MessageBox.Show("CORRECT! ", "AWESOME!");
+                Console.WriteLine("Word matches: " + currentWordToFind);
                 remainingObjects.Remove(currentWordToFind);
+                foreach (String word in remainingObjects)
+                {
+                    Console.WriteLine("Remaining item: " + word);
+                }
+                
                 
 
                 resetScreenTimer();
@@ -614,6 +625,10 @@ namespace MSTranslatorTextDemo
         private void startMiniGame()
         {
             //Check if there are enough known items to play the game
+            knownObjects = new ArrayList();
+            knownObjects.Add("cat");
+            knownObjects.Add("dog");
+            knownObjects.Add("bird");
             if (knownObjects.Count < miniGameKnownObjectLimit)
             {
                 int diff = miniGameKnownObjectLimit - knownObjects.Count;
@@ -637,9 +652,22 @@ namespace MSTranslatorTextDemo
         private void launchMiniGame()
         {
             playingMiniGame = true;
-            remainingObjects = knownObjects;
+            remainingObjects = copyArrayListToArrayList(knownObjects);
             nextRoundOfMiniGame();
 
+        }
+
+        private ArrayList copyArrayListToArrayList(ArrayList fromList)
+        {
+
+            ArrayList resultList = new ArrayList();
+
+            foreach(object item in fromList)
+            {
+                resultList.Add(item);
+            }
+
+            return resultList;
         }
 
 
@@ -647,12 +675,20 @@ namespace MSTranslatorTextDemo
 
         private void nextRoundOfMiniGame()
         {
+            
+            foreach (String item in remainingObjects){
+                Console.WriteLine(item);
+            };
+
+            
 
             stopTimer();
             miniGameTimer = new System.Timers.Timer(1000);
             if(remainingObjects.Count <= 0)
             {
                 MessageBoxResult gameOver = MessageBox.Show("You've completed the game!", "Game over!");
+                playingMiniGame = false;
+                stopTimer();
             } else
             {
                 //1. Choose a random word from the list of known objects
@@ -666,9 +702,7 @@ namespace MSTranslatorTextDemo
                 //3.Start the timer. 
                 startMiniGameTimer(currentWordToFind);
             }
-            
 
-            
         }
 
 
