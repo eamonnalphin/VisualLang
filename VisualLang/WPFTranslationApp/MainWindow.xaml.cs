@@ -59,9 +59,10 @@ namespace MSTranslatorTextDemo
         //variables associated with the minigame. 
         ArrayList knownObjects; //an arraylist to keep known objects in. 
         int miniGameKnownObjectLimit = 3; //must have this many items recognized in order to play. 
-        private static int timeLimit = 30000; //the number of milliseconds the user has to find the object. 
-        private System.Timers.Timer miniGameTimer; //the timer that counts down in the minigame. 
-       
+        System.Timers.Timer miniGameTimer = new System.Timers.Timer(1000); //a timer to update the time remaining on the main screen. 
+        int timeRemaining = 30; //the number of seconds the user has to find the object. 
+        String currentWordToFind = "";
+
         bool playingMiniGame = false;
 
 
@@ -211,7 +212,10 @@ namespace MSTranslatorTextDemo
                 ImageAnalysis analysis = await computerVision.AnalyzeImageInStreamAsync(
                     imageStream, features);
                 String textToTranslate = GetObjectNameAndSetLabels(analysis);
+                
                 TranslateTextToForeignLanguage(textToTranslate);
+                
+                
             }
         }
 
@@ -352,11 +356,29 @@ namespace MSTranslatorTextDemo
 
             DetectedObjectLabel.Content = detectedObjectString;
 
+            if (playingMiniGame)
+            {
+                checkIfWordMatches(textToTranslate);
+            }
+
             return textToTranslate;
 
-
-
         }
+
+
+        private void checkIfWordMatches(String userSuggestion)
+        {
+            if (userSuggestion.Equals(currentWordToFind))
+            {
+                
+                MessageBoxResult timeUP = MessageBox.Show("CORRECT! ", "AWESOME!");
+                remainingObjects.Remove(currentWordToFind);
+                resetScreenTimer();
+                nextRoundOfMiniGame();
+
+            }
+        }
+
 
         /// <summary>
         /// Get the name of, and translate, the object in the analysis. 
@@ -427,11 +449,12 @@ namespace MSTranslatorTextDemo
         }
 
 
+
         /// <summary>
         /// Translates the string to the foreign language, for the minigame. 
         /// </summary>
         /// <param name="textToTranslate"></param>
-        private async void TranslateTextToForeignLanguageForMiniGame(String textToTranslate)
+        private async void TranslateTextToForeignLanguageForMiniGameToFind(String textToTranslate)
         {
 
 
@@ -601,42 +624,49 @@ namespace MSTranslatorTextDemo
             }
         }
 
+
+        ArrayList remainingObjects;
         /// <summary>
         /// Starts the minigame. 
         /// </summary>
         private void launchMiniGame()
         {
-
-            ArrayList remainingObjects = knownObjects;
-
-            //1. Choose a random word from the list of known objects
-            Random randomNumGen = new Random();
-            int randomWordIndex = randomNumGen.Next(0, remainingObjects.Count);
-            String objectToFind = (String) remainingObjects[randomWordIndex];
-
-            //2. Get the translation of the word. 
-            TranslateTextToForeignLanguageForMiniGame(objectToFind);
-
-            //3.Start the timer. 
-            startMiniGameTimer(objectToFind);
-
-            screenTimer.Elapsed += delegate { updateScreenTimer(); } ;
-            screenTimer.Start();
-
-            
-            
-
-
+            playingMiniGame = true;
+            remainingObjects = knownObjects;
+            nextRoundOfMiniGame();
 
         }
 
+
+        private void nextRoundOfMiniGame()
+        {
+
+            if(remainingObjects.Count <= 0)
+            {
+                MessageBoxResult timeUP = MessageBox.Show("You've completed the game!", "Game over!");
+            } else
+            {
+                //1. Choose a random word from the list of known objects
+                Random randomNumGen = new Random();
+                int randomWordIndex = randomNumGen.Next(0, remainingObjects.Count);
+                currentWordToFind = (String)remainingObjects[randomWordIndex];
+
+                //2. Get the translation of the word. 
+                TranslateTextToForeignLanguageForMiniGameToFind(currentWordToFind);
+
+                //3.Start the timer. 
+                startMiniGameTimer(currentWordToFind);
+            }
+            
+
+            
+        }
+
+
         private void startMiniGameTimer(String objectToFind)
         {
-            
-            miniGameTimer = new System.Timers.Timer(timeLimit);
-            miniGameTimer.AutoReset = false;
-            miniGameTimer.Enabled = true;
-            miniGameTimer.Elapsed += delegate { miniGameTimeUp(objectToFind); };
+
+            miniGameTimer.Elapsed += delegate { updateScreenTimer(objectToFind); };
             miniGameTimer.Start();
 
         }
@@ -652,15 +682,22 @@ namespace MSTranslatorTextDemo
 
         }
 
-        System.Timers.Timer screenTimer = new System.Timers.Timer(1000);
-        int timeRemaining = 30;
+       
 
 
-        private void updateScreenTimer()
+        private void updateScreenTimer(string objectToFind)
         {
             timeRemaining -= 1;
-            
+            if(timeRemaining <= 0)
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                   miniGameTimeUp(objectToFind);
+                    miniGameTimer.Stop();
 
+                });
+            }
+            
             this.Dispatcher.Invoke(() =>
             {
                 CountDownTimer.Content = timeRemaining.ToString();
@@ -668,10 +705,13 @@ namespace MSTranslatorTextDemo
 
         }
 
+
         private void resetScreenTimer()
         {
+            miniGameTimer.Stop();
             timeRemaining = 30;
-            screenTimer.Stop();
+            CountDownTimer.Content = timeRemaining;
+            
         }
 
     }
