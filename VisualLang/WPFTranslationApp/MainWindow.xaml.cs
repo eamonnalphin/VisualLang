@@ -58,9 +58,10 @@ namespace MSTranslatorTextDemo
 
         //variables associated with the minigame. 
         ArrayList knownObjects; //an arraylist to keep known objects in. 
-        int miniGameKnownObjectLimit = 10; //must have this many items recognized in order to play. 
-        float timeLimit = 30; //the number of seconds the user has to find the object. 
-        private static System.Timers.Timer miniGameTimer; //the timer that counts down in the minigame. 
+        int miniGameKnownObjectLimit = 3; //must have this many items recognized in order to play. 
+        private static int timeLimit = 30000; //the number of milliseconds the user has to find the object. 
+        private System.Timers.Timer miniGameTimer; //the timer that counts down in the minigame. 
+       
         bool playingMiniGame = false;
 
 
@@ -617,12 +618,61 @@ namespace MSTranslatorTextDemo
             TranslateTextToForeignLanguageForMiniGame(objectToFind);
 
             //3.Start the timer. 
+            startMiniGameTimer(objectToFind);
 
+            screenTimer.Elapsed += delegate { updateScreenTimer(); } ;
+            screenTimer.Start();
+
+            
+            
 
 
 
         }
 
+        private void startMiniGameTimer(String objectToFind)
+        {
+            
+            miniGameTimer = new System.Timers.Timer(timeLimit);
+            miniGameTimer.AutoReset = false;
+            miniGameTimer.Enabled = true;
+            miniGameTimer.Elapsed += delegate { miniGameTimeUp(objectToFind); };
+            miniGameTimer.Start();
+
+        }
+
+        
+
+
+        private void miniGameTimeUp(String objectToFind)
+        {
+            //display an alert
+            MessageBoxResult timeUP = MessageBox.Show("Time up, the word was: \"" + objectToFind + "\"", "Time up!");
+            resetScreenTimer();
+
+        }
+
+        System.Timers.Timer screenTimer = new System.Timers.Timer(1000);
+        int timeRemaining = 30;
+
+
+        private void updateScreenTimer()
+        {
+            timeRemaining -= 1;
+            
+
+            this.Dispatcher.Invoke(() =>
+            {
+                CountDownTimer.Content = timeRemaining.ToString();
+            });
+
+        }
+
+        private void resetScreenTimer()
+        {
+            timeRemaining = 30;
+            screenTimer.Stop();
+        }
 
     }
 

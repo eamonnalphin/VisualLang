@@ -98,6 +98,13 @@
             VerticalAlignment="Top" 
             RenderTransformOrigin="1.769,0.741" 
             Width="294"/>
+        
+        <Label 
+            x:Name="CountDownTimer"
+            Content="Time Left" 
+            HorizontalAlignment="Left"
+            Margin="574,436,0,0" 
+            VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
