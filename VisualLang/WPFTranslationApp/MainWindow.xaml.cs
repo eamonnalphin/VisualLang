@@ -638,6 +638,8 @@ namespace MSTranslatorTextDemo
         }
 
 
+        Random randomNumGen = new Random(); //random number generator. 
+
         private void nextRoundOfMiniGame()
         {
 
@@ -647,7 +649,7 @@ namespace MSTranslatorTextDemo
             } else
             {
                 //1. Choose a random word from the list of known objects
-                Random randomNumGen = new Random();
+                
                 int randomWordIndex = randomNumGen.Next(0, remainingObjects.Count);
                 currentWordToFind = (String)remainingObjects[randomWordIndex];
 
@@ -665,7 +667,7 @@ namespace MSTranslatorTextDemo
 
         private void startMiniGameTimer(String objectToFind)
         {
-
+            
             miniGameTimer.Elapsed += delegate { updateScreenTimer(objectToFind); };
             miniGameTimer.Start();
 
@@ -693,7 +695,7 @@ namespace MSTranslatorTextDemo
                 this.Dispatcher.Invoke(() =>
                 {
                    miniGameTimeUp(objectToFind);
-                    miniGameTimer.Stop();
+                   miniGameTimer.Enabled = false;
 
                 });
             }
@@ -709,8 +711,10 @@ namespace MSTranslatorTextDemo
         private void resetScreenTimer()
         {
             miniGameTimer.Stop();
+            miniGameTimer.Enabled = false;
             timeRemaining = 30;
             CountDownTimer.Content = timeRemaining;
+            miniGameTimer.Enabled = true;
             
         }
 
