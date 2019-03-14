@@ -88,11 +88,12 @@
             Content="PlayMiniGame"
             HorizontalAlignment="Left" 
             Margin="54,83,0,0" 
-            VerticalAlignment="Top" Width="75" Click="PlayMGBtn_Click"/>
+            VerticalAlignment="Top" Width="100" Click="PlayMGBtn_Click"/>
         
         <Label 
             x:Name="ObjectToFindLabel"
             Content="" 
+            Visibility="Hidden"
             HorizontalAlignment="Left" 
             Margin="200,436,0,0" 
             VerticalAlignment="Top" 
@@ -100,8 +101,9 @@
             Width="294"/>
         
         <Label 
-            x:Name="CountDownTimer"
+            x:Name="CountDownTimerLabel"
             Content="Time Left" 
+            Visibility="Hidden"
             HorizontalAlignment="Left"
             Margin="574,436,0,0" 
             VerticalAlignment="Top"/>

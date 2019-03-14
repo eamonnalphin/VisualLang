@@ -60,7 +60,8 @@ namespace MSTranslatorTextDemo
         ArrayList knownObjects; //an arraylist to keep known objects in. 
         int miniGameKnownObjectLimit = 3; //must have this many items recognized in order to play. 
         System.Timers.Timer miniGameTimer = new System.Timers.Timer(1000); //a timer to update the time remaining on the main screen. 
-        int timeRemaining = 30; //the number of seconds the user has to find the object. 
+        int fullTimeRemaining = 30; //the amount of time the user gets to find the object. 
+        int timeRemaining = 30; //the number of seconds remaining the user has to find the object. 
         String currentWordToFind = "";
 
         bool playingMiniGame = false;
@@ -200,7 +201,12 @@ namespace MSTranslatorTextDemo
         //*** ANALYZE LOCAL IMAGE ASYNC
         private async Task AnalyzeLocalAsync(string imagePath)
         {
-            
+
+            if (playingMiniGame)
+            {
+                miniGameTimer.Stop();
+            }
+
 
             if (!File.Exists(imagePath))
             {
@@ -383,16 +389,19 @@ namespace MSTranslatorTextDemo
                 {
                     Console.WriteLine("Remaining item: " + word);
                 }
-                
-                
-
+  
                 resetScreenTimer();
                 nextRoundOfMiniGame();
 
             } else
             {
                 MessageBoxResult timeUP = MessageBox.Show("Try Again! ", "Nope!");
+                miniGameTimer.Start();
+               
             }
+
+            
+
         }
 
 
@@ -577,6 +586,9 @@ namespace MSTranslatorTextDemo
         }
 
 
+        /// <summary>
+        /// Caputres a photo. 
+        /// </summary>
         private void capturePhoto()
         {
 
@@ -598,6 +610,11 @@ namespace MSTranslatorTextDemo
         }
 
         
+        /// <summary>
+        /// handles clicking the snapshot button. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SnapshotBtn_Click(object sender, RoutedEventArgs e)
         {
 
@@ -625,10 +642,7 @@ namespace MSTranslatorTextDemo
         private void startMiniGame()
         {
             //Check if there are enough known items to play the game
-            knownObjects = new ArrayList();
-            knownObjects.Add("cat");
-            knownObjects.Add("dog");
-            knownObjects.Add("bird");
+           
             if (knownObjects.Count < miniGameKnownObjectLimit)
             {
                 int diff = miniGameKnownObjectLimit - knownObjects.Count;
@@ -651,12 +665,18 @@ namespace MSTranslatorTextDemo
         /// </summary>
         private void launchMiniGame()
         {
-            playingMiniGame = true;
+            toggleMiniGameLayout();
             remainingObjects = copyArrayListToArrayList(knownObjects);
             nextRoundOfMiniGame();
 
         }
 
+
+        /// <summary>
+        /// Copies a given arraylist to another, so that they don't end up as references. 
+        /// </summary>
+        /// <param name="fromList"></param>
+        /// <returns></returns>
         private ArrayList copyArrayListToArrayList(ArrayList fromList)
         {
 
@@ -673,6 +693,32 @@ namespace MSTranslatorTextDemo
 
         static Random randomNumGen = new Random(); //random number generator. 
 
+        /// <summary>
+        /// Toggles minigame mode, showing or hiding the necessary elements. 
+        /// </summary>
+        private void toggleMiniGameLayout()
+        {
+           
+            playingMiniGame = !playingMiniGame;
+            if (playingMiniGame)
+            {
+                CountDownTimerLabel.Visibility = Visibility.Visible;
+                ObjectToFindLabel.Visibility = Visibility.Visible;
+                PlayMGBtn.Content = "Stop MiniGame";
+            } else
+            {
+                CountDownTimerLabel.Visibility = Visibility.Hidden;
+                ObjectToFindLabel.Visibility = Visibility.Hidden;
+                miniGameTimer.Dispose();
+                timeRemaining = fullTimeRemaining;
+                PlayMGBtn.Content = "Play MiniGame";
+            }
+
+        }
+
+        /// <summary>
+        /// Starts the next round of the minigame. 
+        /// </summary>
         private void nextRoundOfMiniGame()
         {
             
@@ -687,7 +733,7 @@ namespace MSTranslatorTextDemo
             if(remainingObjects.Count <= 0)
             {
                 MessageBoxResult gameOver = MessageBox.Show("You've completed the game!", "Game over!");
-                playingMiniGame = false;
+                toggleMiniGameLayout();
                 stopTimer();
             } else
             {
@@ -705,7 +751,10 @@ namespace MSTranslatorTextDemo
 
         }
 
-
+        /// <summary>
+        /// Starts the minigame timer for the given object. 
+        /// </summary>
+        /// <param name="objectToFind"></param>
         private void startMiniGameTimer(String objectToFind)
         {
             miniGameTimer.Enabled = true;
@@ -717,18 +766,23 @@ namespace MSTranslatorTextDemo
 
         
 
-
+        /// <summary>
+        /// Called when the timer runs out. Displays a message. 
+        /// </summary>
+        /// <param name="objectToFind"></param>
         private void miniGameTimeUp(String objectToFind)
         {
             //display an alert
             MessageBoxResult timeUP = MessageBox.Show("Time up, the word was: \"" + objectToFind + "\"", "Time up!");
-            
 
         }
 
        
 
-
+        /// <summary>
+        /// Updates the label showing how much time is left on the screen and checks if time is up. 
+        /// </summary>
+        /// <param name="objectToFind"></param>
         private void updateScreenTimer(string objectToFind)
         {
             timeRemaining -= 1;
@@ -745,12 +799,14 @@ namespace MSTranslatorTextDemo
             
             this.Dispatcher.Invoke(() =>
             {
-                CountDownTimer.Content = timeRemaining.ToString();
+                CountDownTimerLabel.Content = timeRemaining.ToString();
             });
 
         }
 
-
+        /// <summary>
+        /// Stops the timer and resets it so we don't end up with multiple instances. 
+        /// </summary>
         private void stopTimer()
         {
             miniGameTimer.Stop();
@@ -758,10 +814,13 @@ namespace MSTranslatorTextDemo
             miniGameTimer.Dispose();
         }
 
+        /// <summary>
+        /// Resets the label showing how much time the user has left. 
+        /// </summary>
         private void resetScreenTimer()
         {
-            timeRemaining = 30;
-            CountDownTimer.Content = timeRemaining;
+            timeRemaining = fullTimeRemaining;
+            CountDownTimerLabel.Content = timeRemaining;
         }
 
     }
