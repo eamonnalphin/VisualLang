@@ -373,9 +373,14 @@ namespace MSTranslatorTextDemo
                 
                 MessageBoxResult timeUP = MessageBox.Show("CORRECT! ", "AWESOME!");
                 remainingObjects.Remove(currentWordToFind);
+                
+
                 resetScreenTimer();
                 nextRoundOfMiniGame();
 
+            } else
+            {
+                MessageBoxResult timeUP = MessageBox.Show("Try Again! ", "Nope!");
             }
         }
 
@@ -638,14 +643,16 @@ namespace MSTranslatorTextDemo
         }
 
 
-        Random randomNumGen = new Random(); //random number generator. 
+        static Random randomNumGen = new Random(); //random number generator. 
 
         private void nextRoundOfMiniGame()
         {
 
+            stopTimer();
+            miniGameTimer = new System.Timers.Timer(1000);
             if(remainingObjects.Count <= 0)
             {
-                MessageBoxResult timeUP = MessageBox.Show("You've completed the game!", "Game over!");
+                MessageBoxResult gameOver = MessageBox.Show("You've completed the game!", "Game over!");
             } else
             {
                 //1. Choose a random word from the list of known objects
@@ -667,7 +674,8 @@ namespace MSTranslatorTextDemo
 
         private void startMiniGameTimer(String objectToFind)
         {
-            
+            miniGameTimer.Enabled = true;
+            miniGameTimer.Interval = 1000;
             miniGameTimer.Elapsed += delegate { updateScreenTimer(objectToFind); };
             miniGameTimer.Start();
 
@@ -680,7 +688,7 @@ namespace MSTranslatorTextDemo
         {
             //display an alert
             MessageBoxResult timeUP = MessageBox.Show("Time up, the word was: \"" + objectToFind + "\"", "Time up!");
-            resetScreenTimer();
+            
 
         }
 
@@ -694,8 +702,9 @@ namespace MSTranslatorTextDemo
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                   miniGameTimeUp(objectToFind);
-                   miniGameTimer.Enabled = false;
+                    stopTimer();
+                    miniGameTimeUp(objectToFind);
+                    resetScreenTimer();
 
                 });
             }
@@ -708,14 +717,17 @@ namespace MSTranslatorTextDemo
         }
 
 
-        private void resetScreenTimer()
+        private void stopTimer()
         {
             miniGameTimer.Stop();
             miniGameTimer.Enabled = false;
+            miniGameTimer.Dispose();
+        }
+
+        private void resetScreenTimer()
+        {
             timeRemaining = 30;
             CountDownTimer.Content = timeRemaining;
-            miniGameTimer.Enabled = true;
-            
         }
 
     }
