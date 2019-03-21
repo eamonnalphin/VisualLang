@@ -599,6 +599,7 @@ namespace MSTranslatorTextDemo
             try
             {
                 DetectedObjectLabel.Content = "Detecting object...";
+                Console.WriteLine("Detecting object...");
                 runDetection();
             } catch (Exception e)
             {
@@ -619,6 +620,7 @@ namespace MSTranslatorTextDemo
         {
 
             TranslatedTextLabel.Content = "Detecting and Translating...";
+            Console.WriteLine("Detecting and translating");
             capturePhoto();
             
         }
@@ -704,11 +706,13 @@ namespace MSTranslatorTextDemo
             {
                 CountDownTimerLabel.Visibility = Visibility.Visible;
                 ObjectToFindLabel.Visibility = Visibility.Visible;
+                FindLabel.Visibility = Visibility.Visible;
                 PlayMGBtn.Content = "Stop MiniGame";
             } else
             {
                 CountDownTimerLabel.Visibility = Visibility.Hidden;
                 ObjectToFindLabel.Visibility = Visibility.Hidden;
+                FindLabel.Visibility = Visibility.Hidden;
                 miniGameTimer.Dispose();
                 timeRemaining = fullTimeRemaining;
                 PlayMGBtn.Content = "Play MiniGame";

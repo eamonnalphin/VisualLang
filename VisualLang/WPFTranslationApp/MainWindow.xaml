@@ -62,12 +62,6 @@
             
            />
 
-
-
-
-
-
-
         <cam:Webcam 
             x:Name="WebcamViewer" 
             FrameRate="30"        
@@ -89,7 +83,24 @@
             HorizontalAlignment="Left" 
             Margin="54,83,0,0" 
             VerticalAlignment="Top" Width="100" Click="PlayMGBtn_Click"/>
-        
+
+
+
+        <Label 
+            x:Name="FindLabel"
+            Content="Find: " 
+            Visibility="Hidden"
+            HorizontalAlignment="Left" 
+            Margin="42,436,0,0" 
+            VerticalAlignment="Top" 
+            RenderTransformOrigin="1.769,0.741"
+            Width="79"
+            Foreground="Black"
+            FontSize="24"
+            FontWeight="ExtraBold"
+            HorizontalContentAlignment="Center" Height="38"
+            />
+
         <Label 
             x:Name="ObjectToFindLabel"
             Content="" 
@@ -97,16 +108,25 @@
             HorizontalAlignment="Left" 
             Margin="200,436,0,0" 
             VerticalAlignment="Top" 
-            RenderTransformOrigin="1.769,0.741" 
-            Width="294"/>
-        
+            RenderTransformOrigin="1.769,0.741"
+            Width="294"
+            Foreground="Red"
+            FontSize="24"
+            FontWeight="ExtraBold"
+            HorizontalContentAlignment="Center"
+            />
+
         <Label 
             x:Name="CountDownTimerLabel"
-            Content="Time Left" 
+            Content="" 
             Visibility="Hidden"
             HorizontalAlignment="Left"
-            Margin="574,436,0,0" 
-            VerticalAlignment="Top"/>
+            Margin="563,440,0,0" 
+            VerticalAlignment="Top"
+            Foreground="Green"
+            FontWeight="Bold"
+            FontSize="20"
+            />
 
     </Grid>
 </Window>
