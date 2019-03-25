@@ -257,6 +257,9 @@ namespace MSTranslatorTextDemo
                 String textToTranslate = GetObjectNameAndSetLabels(analysis);
                 
                 TranslateTextToForeignLanguage(textToTranslate);
+
+                //delete the file
+                File.Delete(imagePath);
  
             }
 
