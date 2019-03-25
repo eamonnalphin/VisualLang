@@ -58,6 +58,9 @@
             VerticalAlignment="Top" 
             Width="294" 
             Height="42"
+            FontSize="24"
+            FontWeight="Bold"
+            ToolTipOpening="Click to send a photo and detect the object."
             Click="SnapshotBtn_Click" 
             
            />
