@@ -25,6 +25,41 @@ using System.Windows.Media;
 using System.Threading;
 using System.Collections;
 
+
+
+
+/// <summary>
+/// References:
+/// *********************************************************************************
+/// Title: WPF-Webcam-control
+/// Author: Meshack Musundi
+/// Date: September 25, 2017
+/// Code Version: 3.3.1
+/// Type: Nuget Package
+/// Availability: https://www.codeproject.com/Articles/285964/WPF-Webcam-Control
+/// *********************************************************************************
+/// Title: Microsoft Translator Text API
+/// Author: Microsoft
+/// Date: March 28, 2018
+/// Code Version: 3.0
+/// Type: API
+/// Availability: https://docs.microsoft.com/en-us/azure/cognitive-services/translator/
+/// *********************************************************************************
+/// Title: Microsoft Computer Vision API
+/// Author: Microsoft
+/// Date: 2017
+/// Code Version: 2.0
+/// Type: API
+/// Availability: https://azure.microsoft.com/en-ca/services/cognitive-services/computer-vision/
+/// *********************************************************************************
+/// Title: Bing Spell Check API
+/// Author: Microsoft
+/// Date: June 20, 2016
+/// Code Version: 7.0
+/// Type: API
+/// Availability: https://azure.microsoft.com/en-ca/services/cognitive-services/spell-check/
+/// *********************************************************************************
+/// </summary>
 namespace MSTranslatorTextDemo
 {
 
