@@ -871,6 +871,8 @@ namespace MSTranslatorTextDemo
         private void ViewAbout(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("About clicked");
+            WPFTranslationApp.AboutScreen aboutScreen = new WPFTranslationApp.AboutScreen();
+            aboutScreen.Show();
         }
 
 

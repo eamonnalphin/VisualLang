@@ -136,7 +136,7 @@
             HorizontalAlignment="Left" 
             Margin="556,636,0,0" 
             VerticalAlignment="Top"
-            MouseDoubleClick="ViewAbout"
+            Click="ViewAbout"
             Background="Transparent"
             BorderThickness="0"
             />
@@ -147,7 +147,7 @@
             HorizontalAlignment="Left" 
             Margin="604,636,0,0" 
             VerticalAlignment="Top"
-            MouseDoubleClick="ViewPrivacyPolicy"
+            Click="ViewPrivacyPolicy"
             Background="Transparent"
             BorderThickness="0"
            

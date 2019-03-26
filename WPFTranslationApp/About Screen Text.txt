@@ -1,0 +1,7 @@
+﻿VisualLang is a visual way to learn another language. 
+
+It uses your computers webcam, object recognition, and text translation to take a photo of an object, analyze what that object is, and display the name of the object in a language of your choosing! 
+
+As you use the system to recognize objects, the names will get added to memory. When you've got 10 names in memory you can activate the minigame!
+
+The minigame will pull random names from memory, translat them into your chosen langauge, then you will have 30 seconds to locate the object with that name, and use the camera to identify it. If you provide the correct object, you get a point! Otherwise, you have to try again! If you run out of time, the game will tell you what the name is, then get another word. Words you successfully translate will be removed, but words you don't will come up again. 
