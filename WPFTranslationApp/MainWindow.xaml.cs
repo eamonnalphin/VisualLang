@@ -865,6 +865,20 @@ namespace MSTranslatorTextDemo
             CountDownTimerLabel.Content = timeRemaining;
         }
 
+
+
+
+        private void ViewAbout(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("About clicked");
+        }
+
+
+        private void ViewPrivacyPolicy(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Privacy Policy clicked.");
+        }
+
     }
 
 }

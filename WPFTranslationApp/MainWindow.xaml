@@ -32,7 +32,7 @@
             VerticalAlignment="Top" 
             Width="620" 
             FontSize="14" 
-            Height="68" 
+            Height="42" 
             BorderThickness="1"
             BorderBrush="Black"
             />
@@ -45,7 +45,7 @@
             VerticalAlignment="Top" 
             Width="620" 
             FontSize="14" 
-            Height="84" 
+            Height="42" 
             BorderThickness="1"
             BorderBrush="Black"/>
 
@@ -129,6 +129,32 @@
             FontWeight="Bold"
             FontSize="20"
             />
+        
+        <Button 
+            x:Name="AboutLabel"
+            Content="About" 
+            HorizontalAlignment="Left" 
+            Margin="556,636,0,0" 
+            VerticalAlignment="Top"
+            MouseDoubleClick="ViewAbout"
+            Background="Transparent"
+            BorderThickness="0"
+            />
+
+        <Button 
+            x:Name="PrivacyPolicyLabel"
+            Content="Privacy Policy" 
+            HorizontalAlignment="Left" 
+            Margin="604,636,0,0" 
+            VerticalAlignment="Top"
+            MouseDoubleClick="ViewPrivacyPolicy"
+            Background="Transparent"
+            BorderThickness="0"
+           
+            />
+
+
+
 
     </Grid>
 </Window>
