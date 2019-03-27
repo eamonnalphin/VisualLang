@@ -14,3 +14,7 @@ Hints & Limitations:
 - The system cannot recognize brands (thats a separate feature offered by Microsoft, not included with this program).
 - The system is not perfect, most objects tested had anywhere between 50% and 90% confidence, but it still made mistakes. For example, it thought a combination lock was a watch. 
 - The system will sometimes recognize the breed of an animal instead of simply returning "dog" or "cat". 
+
+Privacy Policy:
+This system uses your computers webcam to take a photo. That photo is briefly saved to your computer before it is deleted, but it is sent to Microsoft for interpretation. 
+You can view Microsofts privacy policy here: https://azure.microsoft.com/en-us/support/legal/cognitive-services-compliance-and-privacy/ 

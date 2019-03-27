@@ -22,14 +22,19 @@
             x:Name="AboutText" Margin="10,61,207,10" 
             TextWrapping="Wrap" 
             Text="About" 
-            FontSize="18" VerticalScrollBarVisibility="Auto" IsReadOnly="True"/>
+            FontSize="12" 
+            VerticalScrollBarVisibility="Auto" 
+            IsReadOnly="True"/>
 
         <TextBox 
             x:Name="CreditsBox" 
             Margin="0,61,10,10.5" 
             TextWrapping="Wrap" 
             Text="Credits" 
-            FontSize="12" HorizontalAlignment="Right" Width="189" VerticalScrollBarVisibility="Auto" IsReadOnly="True"/>
+            FontSize="12" 
+            HorizontalAlignment="Right" Width="189" 
+            VerticalScrollBarVisibility="Auto" 
+            IsReadOnly="True"/>
 
 
     </Grid>
