@@ -168,5 +168,8 @@
   <ItemGroup>
     <Resource Include="About Screen Text.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Credits.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

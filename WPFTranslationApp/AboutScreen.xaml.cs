@@ -23,12 +23,24 @@ namespace WPFTranslationApp
         public AboutScreen()
         {
             InitializeComponent();
+            
+            //Fill the about box with the text in the about screen file. 
             String aboutFileName = "../../About Screen Text.txt";
             applyTextFileTextToTextBox(aboutFileName, AboutText);
+
+            //Fill the credits box with the text in the credits file
+            String creditsFileName = "../../Credits.txt";
+            applyTextFileTextToTextBox(creditsFileName, CreditsBox);
+
         }
 
 
 
+        /// <summary>
+        /// Populates the text box with text from the file. 
+        /// </summary>
+        /// <param name="fileName">the name of the file with the contents</param>
+        /// <param name="thisBox">The textbox to fill</param>
         private void applyTextFileTextToTextBox(String fileName, TextBox thisBox)
         {
             String thisBoxText = File.ReadAllText(fileName);

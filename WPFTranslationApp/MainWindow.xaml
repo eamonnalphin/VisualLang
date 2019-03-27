@@ -9,7 +9,7 @@
         Title="VisualLang" Height="700" Width="700" BorderThickness="0">
     <Grid>
 
-        <Label x:Name="label" Content="VisualLang" HorizontalAlignment="Left" Margin="39,6,0,0" VerticalAlignment="Top" Height="49" FontSize="26.667"/>
+        <Label x:Name="label" Content="VisualLang" HorizontalAlignment="Left" Margin="39,6,0,0" VerticalAlignment="Top" Height="49" FontSize="27"/>
 
 
         <Label x:Name="EnterTextLabel" Content="Specific Path to image file:" HorizontalAlignment="Left" Margin="42,384,0,0" VerticalAlignment="Top" FontSize="14" Visibility="Hidden"/>
