@@ -132,25 +132,13 @@
         
         <Button 
             x:Name="AboutLabel"
-            Content="About" 
+            Content="About &amp; Privacy Policy" 
             HorizontalAlignment="Left" 
             Margin="556,636,0,0" 
             VerticalAlignment="Top"
             Click="ViewAbout"
             Background="Transparent"
             BorderThickness="0"
-            />
-
-        <Button 
-            x:Name="PrivacyPolicyLabel"
-            Content="Privacy Policy" 
-            HorizontalAlignment="Left" 
-            Margin="604,636,0,0" 
-            VerticalAlignment="Top"
-            Click="ViewPrivacyPolicy"
-            Background="Transparent"
-            BorderThickness="0"
-           
             />
 
 
