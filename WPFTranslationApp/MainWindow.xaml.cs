@@ -164,10 +164,17 @@ namespace MSTranslatorTextDemo
         }
 
 
+        /// <summary>
+        /// Prepare the visual aspects of the screen, hiding and setting labels, etc. 
+        /// </summary>
         private void styleGUI()
         {
             TranslatedTextLabel.Content = "Translated Text will Appear Here.";
             DetectedObjectLabel.Content = "Detected Object Name will Appear Here";
+            FindLabel.Visibility = Visibility.Hidden;
+            ObjectToFindLabel.Visibility = Visibility.Hidden;
+            CountDownTimerLabel.Visibility = Visibility.Hidden;
+
         }
 
         /// <summary>
@@ -415,6 +422,10 @@ namespace MSTranslatorTextDemo
         }
 
 
+        /// <summary>
+        /// Checks if the word provided by the user matches the word requested by the game. 
+        /// </summary>
+        /// <param name="userSuggestion">The name of the object provided by the user. </param>
         private void checkIfWordMatches(String userSuggestion)
         {
             if (userSuggestion.Equals(currentWordToFind))
@@ -582,12 +593,19 @@ namespace MSTranslatorTextDemo
             }
         }
 
-
+        /// <summary>
+        /// The user clicks the "detect and translate" button. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DetectionButtonClick(object sender, RoutedEventArgs e)
         {
             runDetection();
         }
 
+        /// <summary>
+        /// Starts object detection. 
+        /// </summary>
         private void runDetection()
         {
            
@@ -606,6 +624,10 @@ namespace MSTranslatorTextDemo
         public Collection<EncoderDevice> VideoDevices { get; set; }
         public Collection<EncoderDevice> AudioDevices { get; set; }
 
+
+        /// <summary>
+        /// STarts the video capture devices and shows the feed on the screen.  
+        /// </summary>
         private void startPreview()
         {
 
@@ -692,9 +714,7 @@ namespace MSTranslatorTextDemo
             }
             else
             {
-
                 launchMiniGame();
-
             }
         }
 
@@ -731,7 +751,7 @@ namespace MSTranslatorTextDemo
         }
 
 
-        static Random randomNumGen = new Random(); //random number generator. 
+        static Random randomNumGen = new Random(); //random number generator, used in picking random items in a list. 
 
         /// <summary>
         /// Toggles minigame mode, showing or hiding the necessary elements. 
@@ -867,18 +887,16 @@ namespace MSTranslatorTextDemo
 
 
 
-
+        /// <summary>
+        /// The user clicked the About & privacy policy button. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ViewAbout(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("About clicked");
             WPFTranslationApp.AboutScreen aboutScreen = new WPFTranslationApp.AboutScreen();
             aboutScreen.Show();
-        }
-
-
-        private void ViewPrivacyPolicy(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine("Privacy Policy clicked.");
         }
 
     }
