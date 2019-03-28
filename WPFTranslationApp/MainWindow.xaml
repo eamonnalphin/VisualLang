@@ -6,84 +6,65 @@
         xmlns:local="clr-namespace:MSTranslatorTextDemo"
         xmlns:cam="clr-namespace:WebcamControl;assembly=WebcamControl"
         mc:Ignorable="d"
-        Title="VisualLang" Height="700" Width="700" BorderThickness="0">
-    <Grid>
+        Title="VisualLang" Height="620" Width="584.5" BorderThickness="0" MinWidth="700" MinHeight="700">
+    <Grid Margin="0,0,0,0.5">
 
-        <Label x:Name="label" Content="VisualLang" HorizontalAlignment="Left" Margin="39,6,0,0" VerticalAlignment="Top" Height="49" FontSize="27"/>
+        <Label x:Name="label" Content="VisualLang" HorizontalAlignment="Left" Margin="42,6,0,0" VerticalAlignment="Top" Height="49" FontSize="27"/>
 
 
         <Label x:Name="EnterTextLabel" Content="Specific Path to image file:" HorizontalAlignment="Left" Margin="42,384,0,0" VerticalAlignment="Top" FontSize="14" Visibility="Hidden"/>
         <TextBox x:Name="ImageFileLocation" HorizontalAlignment="Left" Height="44" Margin="42,418,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="600" TabIndex="3" Visibility="Hidden"/>
-        <Label x:Name="toLabel" Content="Translate to:" HorizontalAlignment="Left" Margin="574,20,0,0" VerticalAlignment="Top" FontSize="14" RenderTransformOrigin="0.648,-0.913"/>
+        <Label x:Name="toLabel" Content="Translate to:" Margin="0,20,45,0" VerticalAlignment="Top" FontSize="14" RenderTransformOrigin="0.648,-0.913" HorizontalAlignment="Right" Width="84"/>
 
         <Button x:Name="DetectionButton" Content="Detect And Translate" HorizontalAlignment="Left" Margin="42,474,0,0" VerticalAlignment="Top" Width="186" Height="31" Click="DetectionButtonClick" FontSize="14" TabIndex="4" IsDefault="True" Visibility="Hidden"/>
         <ComboBox x:Name="ToLanguageComboBox"
-                HorizontalAlignment="Left"
-                Margin="484,48,0,0"
-                VerticalAlignment="Top"
-                Width="175" FontSize="14" TabIndex="2" RenderTransformOrigin="0.497,0.551">
-        </ComboBox>
+                Margin="0,48,42,0"
+                VerticalAlignment="Top" FontSize="14" TabIndex="2" RenderTransformOrigin="0.497,0.551" HorizontalAlignment="Right" Width="175"/>
 
         <Label 
             x:Name="TranslatedTextLabel" 
             Content="" 
-            HorizontalAlignment="Left" 
-            Margin="42,505,0,0" 
-            VerticalAlignment="Top" 
-            Width="620" 
+            Margin="42,516,42,0" 
             FontSize="14" 
-            Height="42" 
             BorderThickness="1"
-            BorderBrush="Black"
+            BorderBrush="Black" Height="52" VerticalAlignment="Top" MinWidth="400"
             />
 
         <Label 
             x:Name="DetectedObjectLabel" 
             Content="" 
-            HorizontalAlignment="Left" 
-            Margin="42,578,0,0" 
-            VerticalAlignment="Top" 
-            Width="620" 
+            Margin="42,588,41.5,45" 
             FontSize="14" 
-            Height="42" 
             BorderThickness="1"
-            BorderBrush="Black"/>
+            BorderBrush="Black" MinWidth="400"/>
 
 
         <Button 
             x:Name="snapshotBtn" 
             Content="Detect and Translate" 
-            HorizontalAlignment="Center" 
-            Margin="0,370,0,0"
-            VerticalAlignment="Top" 
-            Width="294" 
-            Height="42"
+            Margin="200,390,199.5,0"
             FontSize="24"
             FontWeight="Bold"
-            Click="SnapshotBtn_Click" 
+            Click="SnapshotBtn_Click" RenderTransformOrigin="0,0" MaxHeight="50" MinWidth="200" Height="70" VerticalAlignment="Top" MinHeight="70" 
             
            />
 
         <cam:Webcam 
             x:Name="WebcamViewer" 
             FrameRate="30"        
-            Margin="0,0,0,200"
-            
-            Width="700"
+            Margin="42,138,42,0"
             Height="200"
-            
-            HorizontalAlignment="Center"
             FrameSize="1024, 768" 
             Background="Aqua"
     
             ImageDirectory="X:\BCIT Work\CST Y2\Term 1\COMP 3951 Tech Pro\Project\GitHubRepo\VisualLang\TestImages"    
             VideoDevice="{Binding SelectedItem, ElementName=VidDevices}" 
-            AudioDevice="{Binding SelectedItem, ElementName=AudDevices}" />
+            AudioDevice="{Binding SelectedItem, ElementName=AudDevices}" VerticalAlignment="Top" MinWidth="400" />
         <Button 
             x:Name="PlayMGBtn"
             Content="PlayMiniGame"
             HorizontalAlignment="Left" 
-            Margin="54,83,0,0" 
+            Margin="42,83,0,0" 
             VerticalAlignment="Top" Width="100" Click="PlayMGBtn_Click"/>
 
 
@@ -91,9 +72,9 @@
         <Label 
             x:Name="FindLabel"
             Content="Find: " 
-            Visibility="Hidden"
+            Visibility="Visible"
             HorizontalAlignment="Left" 
-            Margin="42,436,0,0" 
+            Margin="42,457,0,0" 
             VerticalAlignment="Top" 
             RenderTransformOrigin="1.769,0.741"
             Width="79"
@@ -105,13 +86,11 @@
 
         <Label 
             x:Name="ObjectToFindLabel"
-            Content="" 
-            Visibility="Hidden"
-            HorizontalAlignment="Left" 
-            Margin="200,436,0,0" 
+            Content="caterpillar" 
+            Visibility="Visible" 
+            Margin="200,458,200,0" 
             VerticalAlignment="Top" 
             RenderTransformOrigin="1.769,0.741"
-            Width="294"
             Foreground="Red"
             FontSize="24"
             FontWeight="ExtraBold"
@@ -120,25 +99,22 @@
 
         <Label 
             x:Name="CountDownTimerLabel"
-            Content="" 
-            Visibility="Hidden"
-            HorizontalAlignment="Left"
-            Margin="563,440,0,0" 
+            Content="12" 
+            Visibility="Visible"
+            Margin="0,462,42,0" 
             VerticalAlignment="Top"
             Foreground="Green"
             FontWeight="Bold"
-            FontSize="20"
+            FontSize="20" RenderTransformOrigin="0.636,1.151" HorizontalAlignment="Right" Width="33"
             />
-        
+
         <Button 
             x:Name="AboutLabel"
             Content="About &amp; Privacy Policy" 
-            HorizontalAlignment="Left" 
-            Margin="556,636,0,0" 
-            VerticalAlignment="Top"
+            Margin="0,0,11,11"
             Click="ViewAbout"
             Background="Transparent"
-            BorderThickness="0"
+            BorderThickness="0" HorizontalAlignment="Right" Width="122" Height="24" VerticalAlignment="Bottom"
             />
 
 
