@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MSTranslatorTextDemo"
         xmlns:cam="clr-namespace:WebcamControl;assembly=WebcamControl"
         mc:Ignorable="d"
-        Title="VisualLang" Height="620" Width="584.5" BorderThickness="0" MinWidth="700" MinHeight="700">
+        Title="VisualLang" Height="602.5" Width="505" BorderThickness="0" MinWidth="700" MinHeight="700">
     <Grid Margin="0,0,0,0.5">
 
         <Label x:Name="label" Content="VisualLang" HorizontalAlignment="Left" Margin="42,6,0,0" VerticalAlignment="Top" Height="49" FontSize="27"/>
@@ -116,6 +116,41 @@
             Background="Transparent"
             BorderThickness="0" HorizontalAlignment="Right" Width="122" Height="24" VerticalAlignment="Bottom"
             />
+
+
+        <Label 
+            x:Name="WordsLeftLabel" 
+            Content="Words Left" 
+            Margin="42,356,0,0" 
+            HorizontalAlignment="Left" 
+            Height="28" 
+            Width="153" HorizontalContentAlignment="Center" FontWeight="Bold" VerticalAlignment="Top"/>
+
+        <Label 
+            x:Name="ScoreNameLabel"
+            Content="Right / Wrong" 
+            HorizontalAlignment="Right"
+            Margin="0,356,42,0" 
+            Width="153"
+            Height="28" HorizontalContentAlignment="Center" FontWeight="Bold" VerticalAlignment="Top"/>
+        
+        <Label 
+            x:Name="WordsLeftCount"
+            Content="0" 
+               VerticalContentAlignment="Center"
+               HorizontalContentAlignment="Center" 
+               Margin="42,390,515,212" 
+               FontSize="24"
+               Width="138"/>
+        
+        <Label 
+            x:Name="ScoreValue"
+            Content="0" 
+            VerticalContentAlignment="Center"
+            HorizontalContentAlignment="Center" 
+            Margin="515,390,42,212" 
+            FontSize="24"
+            Width="138"/>
 
 
 

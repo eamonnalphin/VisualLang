@@ -100,7 +100,8 @@ namespace MSTranslatorTextDemo
         String currentWordToFind = ""; //the current word to find
         static Random randomNumGen = new Random(); //random number generator, used in picking random items in a list. 
         bool playingMiniGame = false; //whether the minigame is running or not, used to adjust actions within object recognition and translation. 
-
+        int wrongGuesses = 0; //the number of total guesses the user made in the game
+        int correctGuesses = 0; //the number of correct guesses the user made in the game
 
 
         //Super Duper Computer Vision Client Instance
@@ -171,9 +172,14 @@ namespace MSTranslatorTextDemo
         {
             TranslatedTextLabel.Content = "Translated Text will Appear Here.";
             DetectedObjectLabel.Content = "Detected Object Name will Appear Here";
-            FindLabel.Visibility = Visibility.Hidden;
-            ObjectToFindLabel.Visibility = Visibility.Hidden;
             CountDownTimerLabel.Visibility = Visibility.Hidden;
+            ObjectToFindLabel.Visibility = Visibility.Hidden;
+            FindLabel.Visibility = Visibility.Hidden;
+            CountDownTimerLabel.Visibility = Visibility.Hidden;
+            WordsLeftCount.Visibility = Visibility.Hidden;
+            WordsLeftLabel.Visibility = Visibility.Hidden;
+            ScoreValue.Visibility = Visibility.Hidden;
+            ScoreNameLabel.Visibility = Visibility.Hidden;
 
         }
 
@@ -428,6 +434,9 @@ namespace MSTranslatorTextDemo
         /// <param name="userSuggestion">The name of the object provided by the user. </param>
         private void checkIfWordMatches(String userSuggestion)
         {
+
+            
+
             if (userSuggestion.ToLower().Equals(currentWordToFind.ToLower()))
             {
                 
@@ -438,19 +447,20 @@ namespace MSTranslatorTextDemo
                 {
                     Console.WriteLine("Remaining item: " + word);
                 }
-  
+
+                correctGuesses++;
                 resetScreenTimer();
                 nextRoundOfMiniGame();
 
             } else
             {
-                
+                wrongGuesses++;
                 MessageBoxResult timeUP = MessageBox.Show("Try Again! ", "Nope!");
                 miniGameTimer.Start();
 
             }
-            
 
+            ScoreValue.Content = correctGuesses.ToString() + " / " + wrongGuesses.ToString();
             
 
         }
@@ -709,7 +719,6 @@ namespace MSTranslatorTextDemo
             knownObjects.Add("Cat");
             knownObjects.Add("Dog");
             knownObjects.Add("Bird");
-            knownObjects.Add("Mouse");
             knownObjects.Add("fish");
             knownObjects.Add("car");
 
@@ -767,20 +776,35 @@ namespace MSTranslatorTextDemo
         {
            
             playingMiniGame = !playingMiniGame;
+            correctGuesses = 0;
+            wrongGuesses = 0;
+
             if (playingMiniGame)
             {
                 CountDownTimerLabel.Visibility = Visibility.Visible;
                 ObjectToFindLabel.Visibility = Visibility.Visible;
                 FindLabel.Visibility = Visibility.Visible;
                 PlayMGBtn.Content = "Stop MiniGame";
+                WordsLeftCount.Visibility = Visibility.Visible;
+                WordsLeftLabel.Visibility = Visibility.Visible;
+                ScoreValue.Visibility = Visibility.Visible;
+                ScoreNameLabel.Visibility = Visibility.Visible;
+              
+
             } else
             {
                 CountDownTimerLabel.Visibility = Visibility.Hidden;
                 ObjectToFindLabel.Visibility = Visibility.Hidden;
                 FindLabel.Visibility = Visibility.Hidden;
+                CountDownTimerLabel.Visibility = Visibility.Hidden;
                 miniGameTimer.Dispose();
                 timeRemaining = fullTimeRemaining;
                 PlayMGBtn.Content = "Play MiniGame";
+                WordsLeftCount.Visibility = Visibility.Hidden;
+                WordsLeftLabel.Visibility = Visibility.Hidden;
+                ScoreValue.Visibility = Visibility.Hidden;
+                ScoreNameLabel.Visibility = Visibility.Hidden;
+  
             }
 
         }
@@ -801,7 +825,7 @@ namespace MSTranslatorTextDemo
             miniGameTimer = new System.Timers.Timer(1000);
             if(remainingObjects.Count <= 0)
             {
-                MessageBoxResult gameOver = MessageBox.Show("You've completed the game!", "Game over!");
+                MessageBoxResult gameOver = MessageBox.Show("You've completed the game! Final Score: " + correctGuesses + " right guesses / " + wrongGuesses + " wrong guesses.", "Game over!");
                 toggleMiniGameLayout();
                 stopTimer();
             } else
@@ -816,6 +840,10 @@ namespace MSTranslatorTextDemo
 
                 //3.Start the timer. 
                 startMiniGameTimer(currentWordToFind);
+
+                //4. Display the content. 
+                WordsLeftCount.Content = remainingObjects.Count;
+
             }
 
         }
@@ -830,6 +858,7 @@ namespace MSTranslatorTextDemo
             miniGameTimer.Interval = 1000;
             miniGameTimer.Elapsed += delegate { updateScreenTimer(objectToFind); };
             miniGameTimer.Start();
+            
 
         }
 
