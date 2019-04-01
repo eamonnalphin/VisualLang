@@ -69,7 +69,7 @@ namespace MSTranslatorTextDemo
         // authentication options, see: https://docs.microsoft.com/azure/cognitive-services/authentication.
         const string COGNITIVE_SERVICES_KEY = "ef0b37aefa9748fdae669e201b8ecbaa"; //Eamonn's key to Microsoft Cognitive Services
         const string SPELL_CHECK_KEY = "11b50d922c7b443d962e7631f983feb3"; //Eamonn's key to the microsoft spellcheck service. 
-        const string OBJECT_RECOGNIZER_KEY = "6926aeac904449bab4a529027e187fe8";
+        const string OBJECT_RECOGNIZER_KEY = "6926aeac904449bab4a529027e187fe8"; //Skyler's key to the object recognition engine. 
 
         // Endpoints for Translator Text and Bing Spell Check
         const string OBJECT_RECOGNIZER_ENDPOINT = "https://canadacentral.api.cognitive.microsoft.com/";
@@ -86,10 +86,10 @@ namespace MSTranslatorTextDemo
             new SortedDictionary<string, string>(Comparer<string>.Create((a, b) => string.Compare(a, b, true)));
 
         private static System.Timers.Timer tokenRefresh; //The timer to refresh the token 
-        private static int tokenTimeout = 8 * 60 * 1000; //8 minutes
+        private static int tokenTimeout = 8 * 60 * 1000; //8 minutes, when a new token has to be obtained. 
 
         String foreignLanguageText; //gets populated by the translateTextIntoLanguage() function. 
-        String unknownObjectString = "Unknown Object";
+        String unknownObjectString = "Unknown Object"; //
 
         //variables associated with the minigame. 
         ArrayList knownObjects; //an arraylist to keep known objects in. 
@@ -97,9 +97,9 @@ namespace MSTranslatorTextDemo
         System.Timers.Timer miniGameTimer = new System.Timers.Timer(1000); //a timer to update the time remaining on the main screen. 
         int fullTimeRemaining = 30; //the amount of time the user gets to find the object. 
         int timeRemaining = 30; //the number of seconds remaining the user has to find the object. 
-        String currentWordToFind = "";
-
-        bool playingMiniGame = false;
+        String currentWordToFind = ""; //the current word to find
+        static Random randomNumGen = new Random(); //random number generator, used in picking random items in a list. 
+        bool playingMiniGame = false; //whether the minigame is running or not, used to adjust actions within object recognition and translation. 
 
 
 
@@ -428,7 +428,7 @@ namespace MSTranslatorTextDemo
         /// <param name="userSuggestion">The name of the object provided by the user. </param>
         private void checkIfWordMatches(String userSuggestion)
         {
-            if (userSuggestion.Equals(currentWordToFind))
+            if (userSuggestion.ToLower().Equals(currentWordToFind.ToLower()))
             {
                 
                 MessageBoxResult match = MessageBox.Show("CORRECT! ", "AWESOME!");
@@ -444,10 +444,12 @@ namespace MSTranslatorTextDemo
 
             } else
             {
+                
                 MessageBoxResult timeUP = MessageBox.Show("Try Again! ", "Nope!");
                 miniGameTimer.Start();
-               
+
             }
+            
 
             
 
@@ -704,7 +706,13 @@ namespace MSTranslatorTextDemo
         private void startMiniGame()
         {
             //Check if there are enough known items to play the game
-           
+            knownObjects.Add("Cat");
+            knownObjects.Add("Dog");
+            knownObjects.Add("Bird");
+            knownObjects.Add("Mouse");
+            knownObjects.Add("fish");
+            knownObjects.Add("car");
+
             if (knownObjects.Count < miniGameKnownObjectLimit)
             {
                 int diff = miniGameKnownObjectLimit - knownObjects.Count;
@@ -751,7 +759,6 @@ namespace MSTranslatorTextDemo
         }
 
 
-        static Random randomNumGen = new Random(); //random number generator, used in picking random items in a list. 
 
         /// <summary>
         /// Toggles minigame mode, showing or hiding the necessary elements. 
@@ -855,6 +862,7 @@ namespace MSTranslatorTextDemo
                     stopTimer();
                     miniGameTimeUp(objectToFind);
                     resetScreenTimer();
+                    nextRoundOfMiniGame();
 
                 });
             }
