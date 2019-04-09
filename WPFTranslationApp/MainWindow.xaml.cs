@@ -701,12 +701,12 @@ namespace MSTranslatorTextDemo
 
 
         /// <summary>
-        /// Caputres a photo. 
+        /// Captures a photo. 
         /// </summary>
         private void capturePhoto()
         {
 
-            WebcamViewer.ImageDirectory = "X:\\BCIT Work\\CST Y2\\Term 1\\COMP 3951 Tech Pro\\Project\\GitHubRepo\\VisualLang\\TestImages";
+            WebcamViewer.ImageDirectory = Directory.GetCurrentDirectory();
             
             String imageFile = WebcamViewer.TakeSnapshot();
             ImageFileLocation.Text = imageFile;
