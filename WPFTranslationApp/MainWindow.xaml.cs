@@ -24,9 +24,7 @@ using System.Drawing;
 using System.Windows.Media;
 using System.Threading;
 using System.Collections;
-
-
-
+using System.Windows.Controls;
 
 /// <summary>
 /// References:
@@ -152,11 +150,12 @@ namespace MSTranslatorTextDemo
 
                 // Populate drop-downs with values from GetLanguagesForTranslate
                 PopulateLanguageMenus();
+                PopulateDevices();
             }
 
             //image capture setup
             this.DataContext = this;
-            startPreview();
+            VideoDeviceSelected(VideoDevices.First().Name);
             styleGUI();
 
 
@@ -297,6 +296,42 @@ namespace MSTranslatorTextDemo
 
             // Set default languages
             ToLanguageComboBox.SelectedItem = "English";
+        }
+
+        private void PopulateDevices()
+        {
+            VideoDevices = EncoderDevices.FindDevices(EncoderDeviceType.Video);
+            foreach(EncoderDevice d in VideoDevices){
+                deviceSelector.Items.Add(d.Name);
+            }
+            
+
+        }
+
+        private void VideoDeviceSelected(string ds)
+        {
+            foreach (EncoderDevice d in VideoDevices)
+            {
+
+                if (ds.Equals(d.Name))
+                {
+                    try
+                    {
+                        // Display webcam video
+                        WebcamViewer.VideoDevice = d; 
+                        WebcamViewer.StartPreview();
+                    }
+                    catch (Microsoft.Expression.Encoder.SystemErrorException ex)
+                    {
+                        MessageBox.Show("Device is in use by another application");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Not enough video devices");
+                    }
+              
+                }
+            }
         }
 
 
@@ -640,21 +675,28 @@ namespace MSTranslatorTextDemo
         /// <summary>
         /// STarts the video capture devices and shows the feed on the screen.  
         /// </summary>
-        private void startPreview()
+        private void startPreview(EncoderDevice device)
         {
-
-            try
+        
+            if(device == null)
             {
-                VideoDevices = EncoderDevices.FindDevices(EncoderDeviceType.Video);
-                AudioDevices = EncoderDevices.FindDevices(EncoderDeviceType.Audio);
-                // Display webcam video
-                WebcamViewer.VideoDevice = VideoDevices[1]; //contains a list of the video devices. Try changing the number if your's isn't working. This should be changed to pull from a list. 
-                WebcamViewer.StartPreview();
+                return;
             }
-            catch (Microsoft.Expression.Encoder.SystemErrorException ex)
-            {
-                MessageBox.Show("Device is in use by another application");
-            }
+                try
+                {
+                    // Display webcam video
+                    WebcamViewer.VideoDevice = device; //contains a list of the video devices. Try changing the number if your's isn't working. This should be changed to pull from a list. 
+                    WebcamViewer.StartPreview();
+                }
+                catch (Microsoft.Expression.Encoder.SystemErrorException ex)
+                {
+                    MessageBox.Show("Device is in use by another application");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Not enough video devices");
+                }
+            
         }
 
 
@@ -936,6 +978,14 @@ namespace MSTranslatorTextDemo
             aboutScreen.Show();
         }
 
+        private void DeviceSelector_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            ComboBox s = (ComboBox)sender;
+            if (s.SelectedValue.ToString() != WebcamViewer.VideoDevice.Name)
+            {
+                VideoDeviceSelected(s.SelectedValue.ToString());
+            }
+        }
     }
 
 }

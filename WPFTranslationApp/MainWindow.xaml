@@ -19,7 +19,7 @@
         <Button x:Name="DetectionButton" Content="Detect And Translate" HorizontalAlignment="Left" Margin="42,474,0,0" VerticalAlignment="Top" Width="186" Height="31" Click="DetectionButtonClick" FontSize="14" TabIndex="4" IsDefault="True" Visibility="Hidden"/>
         <ComboBox x:Name="ToLanguageComboBox"
                 Margin="0,48,42,0"
-                VerticalAlignment="Top" FontSize="14" TabIndex="2" RenderTransformOrigin="0.497,0.551" HorizontalAlignment="Right" Width="175"/>
+                VerticalAlignment="Top" FontSize="14" TabIndex="2" RenderTransformOrigin="0.497,0.551" HorizontalAlignment="Right" Width="175" />
 
         <Label 
             x:Name="TranslatedTextLabel" 
@@ -151,6 +151,12 @@
             Margin="515,390,42,212" 
             FontSize="24"
             Width="138"/>
+        
+        
+        <ComboBox x:Name="deviceSelector"
+            Margin="0,48,264,0"
+            VerticalAlignment="Top" FontSize="14" TabIndex="2" RenderTransformOrigin="0.497,0.551" HorizontalAlignment="Right" Width="175" SelectionChanged="DeviceSelector_SelectionChanged"/>
+        <Label x:Name="deviceLabel" Content="Video Device:" Margin="0,19,264,0" VerticalAlignment="Top" FontSize="14" RenderTransformOrigin="0.648,-0.913" HorizontalAlignment="Right" Width="99"/>
 
 
 
