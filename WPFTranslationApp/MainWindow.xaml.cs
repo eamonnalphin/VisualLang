@@ -298,6 +298,7 @@ namespace MSTranslatorTextDemo
             ToLanguageComboBox.SelectedItem = "English";
         }
 
+        //Populates the device selector
         private void PopulateDevices()
         {
             VideoDevices = EncoderDevices.FindDevices(EncoderDeviceType.Video);
@@ -308,6 +309,7 @@ namespace MSTranslatorTextDemo
 
         }
 
+        //Occurs to select a video device.
         private void VideoDeviceSelected(string ds)
         {
             foreach (EncoderDevice d in VideoDevices)
@@ -978,6 +980,7 @@ namespace MSTranslatorTextDemo
             aboutScreen.Show();
         }
 
+        //Triggered whenever the device selector is changed.
         private void DeviceSelector_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             ComboBox s = (ComboBox)sender;
