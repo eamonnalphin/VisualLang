@@ -440,6 +440,8 @@ namespace MSTranslatorTextDemo
             {
                 textToTranslate += obj.ObjectProperty; //only translate object name
                 detectedObjectString += "\"" + obj.ObjectProperty + "\" (" + (obj.Confidence * 100) + "% Confidence)";
+                //detect only one object
+                break;
             }
 
             if (textToTranslate == "")
