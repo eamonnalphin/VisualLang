@@ -438,8 +438,21 @@ namespace MSTranslatorTextDemo
 
             foreach (DetectedObject obj in objects)
             {
+                detectedObjectString += "\\";
+                if (obj.Parent.ObjectProperty != "")
+                {
+                    textToTranslate += obj.Parent.ObjectProperty;
+                    detectedObjectString += obj.Parent.ObjectProperty;
+
+                }
+                else
+                {
+                    textToTranslate += obj.ObjectProperty;
+                    detectedObjectString += obj.ObjectProperty;
+
+                }
                 textToTranslate += obj.ObjectProperty; //only translate object name
-                detectedObjectString += "\"" + obj.ObjectProperty + "\" (" + (obj.Confidence * 100) + "% Confidence)";
+               detectedObjectString += "\" (" + (obj.Confidence * 100) + "% Confidence)";
                 //detect only one object
                 break;
             }
@@ -752,6 +765,7 @@ namespace MSTranslatorTextDemo
         private void PlayMGBtn_Click(object sender, RoutedEventArgs e)
         {
             startMiniGame();
+            
         }
 
 
@@ -788,10 +802,15 @@ namespace MSTranslatorTextDemo
         /// </summary>
         private void launchMiniGame()
         {
-            toggleMiniGameLayout();
-            remainingObjects = copyArrayListToArrayList(knownObjects);
-            nextRoundOfMiniGame();
+            playingMiniGame = !playingMiniGame;
 
+            remainingObjects = copyArrayListToArrayList(knownObjects);
+            if (playingMiniGame)
+            {
+                launchMiniGame();
+            }
+            
+            toggleMiniGameLayout();
         }
 
 
@@ -821,7 +840,7 @@ namespace MSTranslatorTextDemo
         private void toggleMiniGameLayout()
         {
            
-            playingMiniGame = !playingMiniGame;
+            
             correctGuesses = 0;
             wrongGuesses = 0;
 
@@ -966,6 +985,7 @@ namespace MSTranslatorTextDemo
         {
             timeRemaining = fullTimeRemaining;
             CountDownTimerLabel.Content = timeRemaining;
+
         }
 
 
