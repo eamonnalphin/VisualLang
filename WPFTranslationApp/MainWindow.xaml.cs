@@ -762,11 +762,6 @@ namespace MSTranslatorTextDemo
         private void startMiniGame()
         {
             //Check if there are enough known items to play the game
-            knownObjects.Add("Cat");
-            knownObjects.Add("Dog");
-            knownObjects.Add("Bird");
-            knownObjects.Add("fish");
-            knownObjects.Add("car");
 
             if (knownObjects.Count < miniGameKnownObjectLimit)
             {
