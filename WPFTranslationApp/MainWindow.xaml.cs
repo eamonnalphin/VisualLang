@@ -827,7 +827,7 @@ namespace MSTranslatorTextDemo
         private void toggleMiniGameLayout()
         {
            
-            playingMiniGame = !playingMiniGame;
+            //playingMiniGame = !playingMiniGame;
             correctGuesses = 0;
             wrongGuesses = 0;
 
