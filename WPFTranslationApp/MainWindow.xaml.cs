@@ -807,7 +807,7 @@ namespace MSTranslatorTextDemo
             remainingObjects = copyArrayListToArrayList(knownObjects);
             if (playingMiniGame)
             {
-                launchMiniGame();
+                nextRoundOfMiniGame();
             }
             
             toggleMiniGameLayout();
